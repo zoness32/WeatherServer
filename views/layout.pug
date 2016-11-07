@@ -1,0 +1,25 @@
+doctype html
+html(ng-app='Weather')
+  head
+    title= title
+    meta(name="viewport",content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js')
+    script(src='http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js')
+    script(src='http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js')
+    script(src='http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js')
+    script(src='http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js')
+    script(src='/javascripts/weather.module.js')
+    script(src='/javascripts/weather.js')
+    script(src='/javascripts/weather.service.js')
+    script(src='/javascripts/weatherInfo.directive.js')
+    script(src='/javascripts/charts/chart.directive.js')
+    script(src='/javascripts/charts/chart.service.js')
+    script(src='/scripts/lodash/lodash.min.js')
+    script(src='/scripts/highcharts/highstock.js')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
+    link(rel='stylesheet', href='http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css')
+  body
+    block content
