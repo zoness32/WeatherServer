@@ -1,28 +1,39 @@
 (function () {
     var chartServiceFunc = function($http) {
         var chartService = this;
+        chartService._ = {};
 
-        chartService.createChartCombined = function() {
+        chartService._.createChart = function(chartId) {
+            var apiUrl = "";
+            switch(chartId) {
+                case 'outside-chart':
+                    apiUrl = 'api/all_outside';
+                    break;
+                case 'inside-chart':
+                    apiUrl = 'api/all_inside';
+                    break;
+            }
+
             $http({
                 method: 'GET',
-                url: 'api/all'
+                url: apiUrl
             }).then(function(data) {
                 // split the data set into ohlc and volume
                 var temp = [], humidity = [], pressure = [];
                 var dataArray = data.data;
-                    // set the allowed units for data grouping
-                    // groupingUnits = [[
-                    //     'week',                         // unit name
-                    //     [1]                             // allowed multiples
-                    // ], [
-                    //     'month',
-                    //     [1, 2, 3, 4, 6]
-                    // ]],
+                // set the allowed units for data grouping
+                // groupingUnits = [[
+                //     'week',                         // unit name
+                //     [1]                             // allowed multiples
+                // ], [
+                //     'month',
+                //     [1, 2, 3, 4, 6]
+                // ]],
 
-                    // i = 0;
+                // i = 0;
                 for (var i = 0; i < dataArray.length; i++) {
                     var datum = dataArray[i];
-                    var date = new Date(datum.date).getTime() - 21600000;
+                    var date = new Date(datum.date).getTime() - (1000 * 3600 * 7); // x * 6hrs for non DST, x * 7hrs for DST
                     temp.push([
                         date,
                         parseFloat(datum.temperature)
@@ -40,7 +51,7 @@
                 }
 
                 // create the chart
-                Highcharts.stockChart('combined-chart', {
+                Highcharts.stockChart(chartId, {
                     rangeSelector: {
                         buttons: [
                             {count: 1, text: "1hr", type: "hour"},
@@ -118,6 +129,14 @@
                     }]
                 });
             });
+        };
+
+        chartService.createOutsideChart = function() {
+            chartService._.createChart('outside-chart');
+        };
+
+        chartService.createInsideChart = function() {
+            chartService._.createChart('inside-chart');
         };
 
         return chartService;

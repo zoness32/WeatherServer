@@ -13,9 +13,9 @@ router.get('/', function (req, res) {
     })
 });
 
-router.get('/all', function (req, res) {
+router.get('/all_outside', function (req, res) {
     var collection = db.get('weather_data');
-    collection.find({}, function (err, data) {
+    collection.find({unitId: "1"}, function (err, data) {
         if (err) throw err;
         var result = _.map(data, function(datum) {
             return { date: datum.date,
@@ -29,48 +29,37 @@ router.get('/all', function (req, res) {
     })
 });
 
-router.get('/latest', function getLatest(req, res) {
+router.get('/all_inside', function (req, res) {
     var collection = db.get('weather_data');
-    collection.find({}, {sort: {$natural: -1}, limit: 1}, function (err, data) {
+    collection.find({unitId: "2"}, function (err, data) {
         if (err) throw err;
+        var result = _.map(data, function(datum) {
+            return { date: datum.date,
+                humidity: datum.humidity,
+                temperature: datum.temp,
+                pressure: datum.pressure
+            };
+        });
+
+        res.json(result);
+    })
+});
+
+router.get('/latest_outside', function getLatest(req, res) {
+    var collection = db.get('weather_data');
+    collection.find({unitId: "1"}, {sort: {$natural: -1}, limit: 1}, function (err, data) {
+        if (err) throw err;
+        console.log(data);
         res.json(data);
     });
 });
 
-router.get('/humidity', function getHistoricalHumidity(req, res) {
+router.get('/latest_inside', function getLatest(req, res) {
     var collection = db.get('weather_data');
-    collection.find({}, function (err, data) {
+    collection.find({unitId: "2"}, {sort: {$natural: -1}, limit: 1}, function (err, data) {
         if (err) throw err;
-        var result = _.map(data, function(datum) {
-            return { date: datum.date, humidity: datum.humidity};
-        });
-
-        res.json(result);
-    })
-});
-
-router.get('/temperature', function getHistoricalHumidity(req, res) {
-    var collection = db.get('weather_data');
-    collection.find({}, function (err, data) {
-        if (err) throw err;
-        var result = _.map(data, function(datum) {
-            return { date: datum.date, temperature: datum.temp };
-        });
-
-        res.json(result);
-    })
-});
-
-router.get('/pressure', function getHistoricalHumidity(req, res) {
-    var collection = db.get('weather_data');
-    collection.find({}, function (err, data) {
-        if (err) throw err;
-        var result = _.map(data, function(datum) {
-            return { date: datum.date, pressure: datum.pressure };
-        });
-
-        res.json(result);
-    })
+        res.json(data);
+    });
 });
 
 router.post('/weather_info', function (req, res) {
@@ -79,6 +68,7 @@ router.post('/weather_info', function (req, res) {
     var humi = req.query.humidity;
     var temperature = req.query.temp;
     var pressure = req.query.pressure;
+    var unitId = req.query.unitId;
     // var date = req.params.date;
 
     var date = new Date();
@@ -92,7 +82,8 @@ router.post('/weather_info', function (req, res) {
             humidity: humi,
             temp: temperature,
             pressure: pressure,
-            date: date
+            date: date,
+            unitId: unitId
         }, function (err, data) {
             if (err) throw err;
             res.json(data);

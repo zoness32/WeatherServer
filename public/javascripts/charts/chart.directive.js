@@ -10,7 +10,7 @@
             controller: chartControllerFunc,
             controllerAs: 'vm',
             template: `
-                <md-card md-theme="dark-blue">
+                <md-card md-theme="dark-green">
                     <md-card-title>
                         <md-card-title-text layout-align="center center">
                             <span class="md-headline">{{vm.title}}</span>
