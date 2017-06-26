@@ -11,6 +11,8 @@ let weatherData = require('./routes/weatherStats');
 
 let app = express();
 
+app.use('/static', express.static('node_modules'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
