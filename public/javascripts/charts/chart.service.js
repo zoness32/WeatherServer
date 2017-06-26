@@ -1,10 +1,10 @@
 (function () {
-    var chartServiceFunc = function($http) {
-        var chartService = this;
+    let chartServiceFunc = function($http) {
+        let chartService = this;
         chartService._ = {};
 
         chartService._.createChart = function(chartId) {
-            var apiUrl = "";
+            let apiUrl = "";
             switch(chartId) {
                 case 'outside-chart':
                     apiUrl = 'api/all_outside';
@@ -19,8 +19,8 @@
                 url: apiUrl
             }).then(function(data) {
                 // split the data set into ohlc and volume
-                var temp = [], humidity = [], pressure = [];
-                var dataArray = data.data;
+                let temp = [], humidity = [], pressure = [];
+                let dataArray = data.data;
                 // set the allowed units for data grouping
                 // groupingUnits = [[
                 //     'week',                         // unit name
@@ -31,9 +31,9 @@
                 // ]],
 
                 // i = 0;
-                for (var i = 0; i < dataArray.length; i++) {
-                    var datum = dataArray[i];
-                    var date = new Date(datum.date).getTime() - (1000 * 3600 * 7); // x * 6hrs for non DST, x * 7hrs for DST
+                for (let i = 0; i < dataArray.length; i++) {
+                    let datum = dataArray[i];
+                    let date = new Date(datum.date).getTime() - (1000 * 3600 * 7); // x * 6hrs for non DST, x * 7hrs for DST
                     temp.push([
                         date,
                         parseFloat(datum.temperature)

@@ -1,4 +1,4 @@
-// var app = angular.module('Vidzy', ['ngResource', 'ngRoute']);
+// let app = angular.module('Vidzy', ['ngResource', 'ngRoute']);
 //
 // app.config(['$routeProvider', function ($routeProvider) {
 //     $routeProvider
@@ -20,7 +20,7 @@
 // }]);
 //
 // app.controller('HomeCtrl', ['$scope', '$resource', function ($scope, $resource) {
-//     var videos = $resource('/api/videos');
+//     let videos = $resource('/api/videos');
 //     videos.query(function (vids) {
 //         $scope.videos = vids;
 //     });
@@ -29,7 +29,7 @@
 // app.controller('AddVideoCtrl', ['$scope', '$resource', '$location',
 //     function($scope, $resource, $location){
 //         $scope.save = function(){
-//             var Videos = $resource('/api/videos');
+//             let Videos = $resource('/api/videos');
 //             Videos.save($scope.video, function(){
 //                 $location.path('/');
 //             });
@@ -39,7 +39,7 @@
 //
 // app.controller('EditVideoCtrl', ['$scope', '$resource', '$location', '$routeParams',
 //     function ($scope, $resource, $location, $routeParams) {
-//         var videos = $resource('/api/videos/:id', {id: '@_id'}, {
+//         let videos = $resource('/api/videos/:id', {id: '@_id'}, {
 //             update: {method: 'PUT'}
 //         });
 //

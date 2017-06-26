@@ -31,7 +31,7 @@
                                         </div>
                                     </md-card-content>
                                 </md-card>
-                                <md-card md-theme="green">
+                                <md-card md-theme="dark-green">
                                     <md-card-title>
                                         <md-card-title-text>
                                             <span class="md-headline">Inside</span>
@@ -58,15 +58,15 @@
         };
     });
 
-    var weatherControllerFunc = function ($http, chartService) {
-        var weatherCtrl = this;
+    let weatherControllerFunc = function ($http, chartService) {
+        let weatherCtrl = this;
         weatherCtrl.humidity = [];
         weatherCtrl.temp = [];
         weatherCtrl.pressure = [];
         weatherCtrl.labels = [];
 
         weatherCtrl.getLatestOutsideInfo = function () {
-            var datum = [];
+            let datum = [];
 
             $http({
                 method: 'GET',
@@ -78,7 +78,7 @@
                 weatherCtrl.latestHumidityOutside = datum.humidity || "unavailable";
                 weatherCtrl.latestPressureOutside = datum.pressure || "unavailable";
 
-                var options = {
+                let options = {
                     year: "2-digit",
                     month: "2-digit",
                     day: "2-digit",
@@ -97,7 +97,7 @@
         };
 
         weatherCtrl.getLatestInsideInfo = function () {
-            var datum = [];
+            let datum = [];
 
             $http({
                 method: 'GET',
@@ -109,7 +109,7 @@
                 weatherCtrl.latestHumidityInside = datum.humidity || "unavailable";
                 weatherCtrl.latestPressureInside = datum.pressure || "unavailable";
 
-                var options = {
+                let options = {
                     year: "2-digit",
                     month: "2-digit",
                     day: "2-digit",
@@ -120,7 +120,10 @@
                     hour12: false
                 };
 
-                weatherCtrl.latestUpdateTimeInside = new Intl.DateTimeFormat("en-US", options).format(new Date(datum.date));;
+                weatherCtrl.latestUpdateTimeInside = new Intl.DateTimeFormat("en-US", options).format(new Date(datum.date));
+            }, function(error) {
+                console.log(error);
+                weatherCtrl.latestTempInside = "unavailable";
             }).catch(function (errRes) {
                 console.log("ERROR");
                 console.log(errRes);

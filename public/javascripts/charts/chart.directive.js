@@ -24,8 +24,8 @@
         };
     });
 
-    var chartControllerFunc = function ($scope) {
-        var chartCtrl = this;
+    let chartControllerFunc = function ($scope) {
+        let chartCtrl = this;
         chartCtrl.title = $scope.title;
         chartCtrl.chartId = $scope.chartId;
         return chartCtrl;
