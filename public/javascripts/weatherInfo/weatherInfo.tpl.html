@@ -1,0 +1,47 @@
+<div>
+    <md-card md-theme="dark-green">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Current Weather</span>
+            </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <div layout="row">
+                <md-card class="md-primary md-hue-3">
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Outside</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content>
+                        <div layout="column">
+                            <span>Temperature: {{$ctrl.latestTempOutside}}</span>
+                            <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
+                            <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
+                            <span>Updated at: {{$ctrl.latestUpdateTimeOutside}}</span>
+                        </div>
+                    </md-card-content>
+                </md-card>
+                <md-card md-theme="dark-green">
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">Inside</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content>
+                        <div layout="column">
+                            <span>Temperature: {{$ctrl.latestTempInside}}</span>
+                            <span>Humidity: {{$ctrl.latestHumidityInside}}</span>
+                            <span>Pressure: {{$ctrl.latestPressureInside}}</span>
+                            <span>Updated at: {{$ctrl.latestUpdateTimeInside}}</span>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </md-card-content>
+    </md-card>
+    <div layout="row" layout-xs="column">
+        <chart-component flex chart-title="Outside Weather Data" chart-id="outside-chart"></chart-component>
+        <chart-component flex chart-title="Inside Weather Data" chart-id="inside-chart"></chart-component>
+    </div>
+</div>

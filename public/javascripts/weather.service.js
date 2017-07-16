@@ -108,13 +108,8 @@
             });
         };
 
-        weatherService.getLatestOutsideInfo();
-        weatherService.getLatestInsideInfo();
-        chartService.createOutsideChart();
-        chartService.createInsideChart();
-
         return weatherService;
     };
 
-    angular.module('Weather').service('weatherService', weatherServiceFunc);
+    angular.module('Weather').service('weatherService', [weatherServiceFunc]);
 })();

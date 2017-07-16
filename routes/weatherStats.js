@@ -3,6 +3,7 @@ let router = express.Router();
 let _ = require('lodash');
 let http = require('http');
 let querystring = require('querystring');
+let moment = require('moment');
 
 let monk = require('monk');
 let weather_db = monk('localhost:27017/weather_stats');
@@ -14,6 +15,41 @@ router.get('/', function(req, res) {
         if (err) throw err;
         res.json(data);
     });
+});
+
+router.get('/info_in_range', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let min = req.query.min;
+    let max = req.query.max;
+    let unitId = req.query.unitId;
+
+    if (min !== undefined && unitId !== undefined) {
+        if (max === undefined) {
+            max = moment().format('x');
+        }
+        collection.find({unitId: unitId, date: {$gt: min, $lt: max}}, function(err, data) {
+            if (err) throw err;
+            let result = _.map(data, function(datum) {
+                return {
+                    date: datum.date,
+                    humidity: datum.humidity,
+                    temperature: datum.temp,
+                    pressure: datum.pressure
+                };
+            });
+
+            res.json(result);
+        });
+    } else {
+        res.json({
+            error: "missing min or unitId parameter",
+            data: {
+                unitId: unitId,
+                min: min,
+                max: max
+            }
+        });
+    }
 });
 
 router.get('/all_outside', function(req, res) {
@@ -75,21 +111,75 @@ router.get('/extreme', function getExtreme(req, res) {
     });
 });
 
+router.get('/createMockData', function createMockData(req, res) {
+    let collection = weather_db.get('weather_data');
+    let temp, humidity, pressure, unitId, date, now;
+    let successful = true;
+    now = moment(1490813006000);
+
+    let duration = moment.duration({'minutes' : 2});
+
+    for (let i = 0; i < 64800; i++ && successful) {
+        temp = Math.floor(Math.random() * (100 - 32)) + 32;
+        humidity = Math.floor(Math.random() * (60 - 20)) + 20;
+        pressure = Math.floor(Math.random() * (34 - 25)) + 25;
+        unitId = '2';
+        date = now;
+
+        now = moment(now).add(duration);
+
+        collection.insert({
+            humidity: humidity,
+            temp: temp,
+            pressure: pressure,
+            date: date.format('x'),
+            unitId: unitId
+        }, function(err) {
+            if (err) {
+                console.log('error inserting');
+                successful = false;
+            }
+        });
+    }
+
+    res.json({
+        success: successful
+    })
+});
+
+router.get('/update_dates', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    collection.find({}, function(err, data) {
+        if (err) throw err;
+
+        for (let i = 0; i < data.length; i++) {
+            let oldDate = data[i].date;
+            let newDate = moment(oldDate).format('x');
+            // console.log(newDate);
+            collection.update({date: oldDate}, {$set: {date: newDate }}, function() {
+                // console.log('updated ' + i + '; oldDate: ' + oldDate + '; newDate: ' + newDate);
+            });
+        }
+
+
+        res.json({
+            success: true
+        });
+    });
+});
+
 router.post('/weather_info', function(req, res) {
     let collection = weather_db.get('weather_data');
-    // console.log(req);
     let humi = req.query.humidity;
     let temperature = req.query.temp;
     let pressure = req.query.pressure;
     let unitId = req.query.unitId;
-    // let date = req.params.date;
+    let date = moment().format('x');
 
-    let date = new Date();
-
-    if (humi && humi != null &&
-        temperature && temperature != null &&
-        pressure && pressure != null &&
-        date && date != null) {
+    if (humi && humi !== null &&
+        temperature && temperature !== null &&
+        pressure && pressure !== null &&
+        date && date !== null) {
 
         collection.insert({
             humidity: humi,

@@ -1,16 +1,60 @@
-(function () {
-    let chartServiceFunc = function($http) {
+(function() {
+    let chartServiceFunc = function($http, moment) {
         let chartService = this;
         chartService._ = {};
 
+        chartService.afterSetExtremes = function(e) {
+            let chart = Highcharts.charts[0];
+
+            chart.showLoading('Loading data from server...');
+            $http({
+                method: 'GET',
+                url: 'api/info_in_range?min=' + e.min + '&max=' + e.max + '&unitId=1'
+            }).then(function(data) {
+                // 'https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
+                // '&end=' + Math.round(e.max) + '&callback=?'
+                let temp = [];
+                let humidity = [];
+                let pressure = [];
+
+                for (let i = 0; i < data.data.length; i++) {
+                    let datum = data.data[i];
+                    let date = moment(parseInt(datum.date)).valueOf();
+                    temp.push([
+                        date,
+                        parseFloat(datum.temperature)
+                    ]);
+
+                    humidity.push([
+                        date,
+                        parseFloat(datum.humidity)
+                    ]);
+
+                    pressure.push([
+                        date,
+                        parseFloat(datum.pressure)
+                    ]);
+                }
+
+                chart.series[0].setData(temp);
+                chart.series[1].setData(humidity);
+                chart.series[2].setData(pressure);
+
+                chart.hideLoading();
+            });
+        };
+
         chartService._.createChart = function(chartId) {
             let apiUrl = "";
-            switch(chartId) {
+            let max = moment();
+            let min = moment();
+            switch (chartId) {
                 case 'outside-chart':
+                    // apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'year').format('x') + '&max=' + max + '&unitId=1';
                     apiUrl = 'api/all_outside';
                     break;
                 case 'inside-chart':
-                    apiUrl = 'api/all_inside';
+                    apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'month').format('x') + '&max=' + max + '&unitId=2';
                     break;
             }
 
@@ -33,7 +77,8 @@
                 // i = 0;
                 for (let i = 0; i < dataArray.length; i++) {
                     let datum = dataArray[i];
-                    let date = new Date(datum.date).getTime() - (1000 * 3600 * 7); // x * 6hrs for non DST, x * 7hrs for DST
+                    // let date = new Date(datum.date).getTime() - (1000 * 3600 * 7); // x * 6hrs for non DST, x * 7hrs for DST
+                    let date = moment(parseInt(datum.date)).valueOf();
                     temp.push([
                         date,
                         parseFloat(datum.temperature)
@@ -50,6 +95,12 @@
                     ]);
                 }
 
+                Highcharts.setOptions({
+                    global: {
+                        timezone: 'America/Denver'
+                    }
+                });
+
                 // create the chart
                 Highcharts.stockChart(chartId, {
                     rangeSelector: {
@@ -61,7 +112,18 @@
                             {count: 1, text: "Day", type: "day"},
                             {count: 1, text: "Week", type: "week"}
                         ],
-                        selected: 4
+                        selected: 4,
+                        inputStyle: {
+                            color: '#000'
+                        }
+                    },
+
+                    xAxis: {
+                        type: 'datetime',
+                        events: {
+                            // afterSetExtremes: chartService.afterSetExtremes
+                        },
+                        minRange: 1000 * 3600 // one hour
                     },
 
                     yAxis: [{
@@ -109,7 +171,92 @@
                         data: temp,
                         tooltip: {
                             valueDecimals: 2
-                        }
+                        },
+                        zones: [{
+                            value: -20,
+                            color: '#FF00FF'
+                        }, {
+                            value: -15,
+                            color: '#D100FF'
+                        }, {
+                            value: -10,
+                            color: '#9E00FF'
+                        }, {
+                            value: -5,
+                            color: '#6600FF'
+                        }, {
+                            value: 0,
+                            color: '#0000FF'
+                        }, {
+                            value: 5,
+                            color: '#004AFF'
+                        }, {
+                            value: 10,
+                            color: '#0073FF'
+                        }, {
+                            value: 15,
+                            color: '#00A3FF'
+                        }, {
+                            value: 20,
+                            color: '#00CCFF'
+                        }, {
+                            value: 25,
+                            color: '#00E6FF'
+                        }, {
+                            value: 30,
+                            color: '#00FFFF'
+                        }, {
+                            value: 35,
+                            color: '#00FFB3'
+                        }, {
+                            value: 40,
+                            color: '#7FFF00'
+                        }, {
+                            value: 45,
+                            color: '#CEFF00'
+                        }, {
+                            value: 50,
+                            color: '#FFFF00'
+                        }, {
+                            value: 55,
+                            color: '#FFE600'
+                        }, {
+                            value: 60,
+                            color: '#FFCC00'
+                        }, {
+                            value: 65,
+                            color: '#FFAE00'
+                        }, {
+                            value: 70,
+                            color: '#FF9900'
+                        }, {
+                            value: 75,
+                            color: '#FF7F00'
+                        }, {
+                            value: 80,
+                            color: '#FF4F00'
+                        }, {
+                            value: 85,
+                            color: '#FF0000'
+                        }, {
+                            value: 90,
+                            color: '#FF4545'
+                        }, {
+                            value: 95,
+                            color: '#FF6868'
+                        }, {
+                            value: 100,
+                            color: '#FF8787'
+                        }, {
+                            value: 105,
+                            color: '#FF9E9E'
+                        }, {
+                            value: 110,
+                            color: '#FFB5B5'
+                        }, {
+                            value: 115,
+                            color: '#FFCFCF'
+                        },]
                     }, {
                         type: 'line',
                         name: 'Humidity',
@@ -126,8 +273,34 @@
                         tooltip: {
                             valueDecimals: 2
                         }
-                    }]
+                    }],
+
+                    plotOptions: {
+                        series: {
+                            groupPixelWidth: 20,
+                            forced: true,
+                            units: [
+                                // [
+                                //     'millisecond', // unit name
+                                //     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                                // ],
+                                // [
+                                //     'second',
+                                //     [1, 2, 5, 10, 15, 30]
+                                // ],
+                                [
+                                    'minute',
+                                    [10, 30]
+                                ],
+                                [
+                                    'hour',
+                                    [2, 4, 6, 8, 12]
+                                ]]
+                        }
+                    },
                 });
+            }, function(err) {
+                console.log(err);
             });
         };
 
@@ -136,11 +309,11 @@
         };
 
         chartService.createInsideChart = function() {
-            chartService._.createChart('inside-chart');
+            // chartService._.createChart('inside-chart');
         };
 
         return chartService;
     };
 
-    angular.module('Weather').service('chartService', chartServiceFunc);
+    angular.module('Weather').service('chartService', ['$http', 'moment', chartServiceFunc]);
 })();
