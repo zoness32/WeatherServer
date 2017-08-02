@@ -52,7 +52,7 @@
         weatherCtrl.getWundergroundData = function() {
             $http({
                 method: 'GET',
-                url: 'http://api.wunderground.com/api/fae65a96a64c4a3b/alerts/conditions/forecast/hourly/q/ID/Boise.json'
+                url: 'http://api.wunderground.com/api/fae65a96a64c4a3b/alerts/conditions/forecast/hourly/q/ID/Nampa.json'
             }).then(function(response) {
                 let current = response.data.current_observation;
                 let alerts = response.data.alerts;
