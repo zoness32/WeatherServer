@@ -17,57 +17,44 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/high_temp_for_day', function(req, res) {
+router.get('/highs', function(req, res) {
     let collection = weather_db.get('weather_data');
     let unitId = req.query.unitId;
     let now = moment();
     let beginning = moment([now.year(), now.month(), now.date()]);
 
     if (unitId !== undefined && unitId >= 0) {
-        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
+        let findObject = {unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}};
+        collection.find(findObject, {
             sort: {temp: -1},
             limit: 1
-        }, function(err, data) {
+        }, function(err, tempData) {
             if (err) throw err;
-            res.json(data[0].temp);
-        });
-    } else {
-        res.json({success: false, error: 'A unitId must be provided.'});
-    }
-});
-
-router.get('/high_humidity_for_day', function(req, res) {
-    let collection = weather_db.get('weather_data');
-    let unitId = req.query.unitId;
-    let now = moment();
-    let beginning = moment([now.year(), now.month(), now.date()]);
-
-    if (unitId !== undefined && unitId >= 0) {
-        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
-            sort: {humidity: -1},
-            limit: 1
-        }, function(err, data) {
-            if (err) throw err;
-            res.json(data[0].humidity);
-        });
-    } else {
-        res.json({success: false, error: 'A unitId must be provided.'});
-    }
-});
-
-router.get('/high_pressure_for_day', function(req, res) {
-    let collection = weather_db.get('weather_data');
-    let unitId = req.query.unitId;
-    let now = moment();
-    let beginning = moment([now.year(), now.month(), now.date()]);
-
-    if (unitId !== undefined && unitId >= 0) {
-        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
-            sort: {pressure: -1},
-            limit: 1
-        }, function(err, data) {
-            if (err) throw err;
-            res.json(data[0].pressure);
+            collection.find(findObject, {
+                sort: {humidity: -1},
+                limit: 1
+            }, function(err, humidityData) {
+                if (err) throw err;
+                collection.find(findObject, {
+                    sort: {pressure: -1},
+                    limit: 1
+                }, function(err, pressureData) {
+                    if (err) throw err;
+                    let tempObj = {
+                        temp: tempData[0].temp,
+                        date: tempData[0].date
+                    };
+                    let humiObj = {
+                        humidity: humidityData[0].humidity,
+                        date: humidityData[0].date
+                    };
+                    let pressureObj = {
+                        pressure: pressureData[0].pressure,
+                        date: pressureData[0].date
+                    };
+                    res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
+                });
+            });
         });
     } else {
         res.json({success: false, error: 'A unitId must be provided.'});
@@ -121,11 +108,11 @@ router.post('/delete_documents', function(req, res) {
                 return doc._id;
             });
 
-            collection.remove({_id: { $in: array }}, function(err, numOfRemovedDocs) {
+            collection.remove({_id: {$in: array}}, function(err, numOfRemovedDocs) {
                 numRemoved = numOfRemovedDocs;
             });
 
-            res.json({success: true, numRemoved: numRemoved });
+            res.json({success: true, numRemoved: numRemoved});
         });
 
     } else {

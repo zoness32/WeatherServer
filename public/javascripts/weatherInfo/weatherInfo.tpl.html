@@ -15,16 +15,16 @@
                     </md-card-title>
                     <md-card-content>
                         <div layout="row">
-                        <div layout="column">
-                            <span>Temperature: {{$ctrl.latestTempOutside}}</span>
-                            <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
-                            <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
-                            <span>Updated at: {{$ctrl.latestUpdateTimeOutside}}</span>
-                        </div>
                             <div layout="column">
-                                <span>High Temp: {{$ctrl.highTempToday}}</span>
-                                <span>High Humidity: {{$ctrl.highHumidityToday}}</span>
-                                <span>High Pressure: {{$ctrl.highPressureToday}}</span>
+                                <span>Temperature: {{$ctrl.latestTempOutside}}</span>
+                                <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
+                                <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
+                                <span>Updated at: {{$ctrl.latestUpdateTimeOutside}}</span>
+                            </div>
+                            <div layout="column">
+                                <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
+                                <span>High Humidity: {{$ctrl.highHumidityToday}} at {{$ctrl.highHumidityDate}}</span>
+                                <span>High Pressure: {{$ctrl.highPressureToday}} at {{$ctrl.highPressureDate}}</span>
                             </div>
                         </div>
                     </md-card-content>

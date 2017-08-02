@@ -21,10 +21,10 @@
                 if (!angular.isUndefined(datum) && !angular.isUndefined(datum.temp) &&
                     !angular.isUndefined(datum.humidity) && !angular.isUndefined(datum.pressure) &&
                     !angular.isUndefined(datum.date)) {
-                    weatherCtrl.latestTempOutside = datum.temp;
+                    weatherCtrl.latestTempOutside = datum.temp + '\u00B0';
                     weatherCtrl.latestHumidityOutside = datum.humidity + '%';
-                    weatherCtrl.latestPressureOutside = datum.pressure;
-                    weatherCtrl.latestUpdateTimeOutside = moment(parseInt(datum.date)).format('dddd, MMM D, HH:mm:ss');
+                    weatherCtrl.latestPressureOutside = datum.pressure + ' inHg';
+                    weatherCtrl.latestUpdateTimeOutside = moment(parseInt(datum.date)).format('MM/DD/YY, HH:mm:ss');
                 } else {
                     console.log('api/latest_outside: Data undefined');
                 }
@@ -38,23 +38,14 @@
 
             $http({
                 method: 'GET',
-                url: 'api/high_temp_for_day?unitId=1'
+                url: 'api/highs?unitId=1'
             }).then(function(response) {
-                weatherCtrl.highTempToday = response.data;
-            });
-
-            $http({
-                method: 'GET',
-                url: 'api/high_humidity_for_day?unitId=1'
-            }).then(function(response) {
-                weatherCtrl.highHumidityToday = response.data;
-            });
-
-            $http({
-                method: 'GET',
-                url: 'api/high_pressure_for_day?unitId=1'
-            }).then(function(response) {
-                weatherCtrl.highPressureToday = response.data;
+                weatherCtrl.highTempToday = response.data.temp.temp + '\u00B0';
+                weatherCtrl.highTempDate = moment(parseInt(response.data.temp.date)).format('HH:mm:ss');
+                weatherCtrl.highHumidityToday = response.data.humidity.humidity + '%';
+                weatherCtrl.highHumidityDate = moment(parseInt(response.data.humidity.date)).format('HH:mm:ss');
+                weatherCtrl.highPressureToday = response.data.pressure.pressure + ' inHg';
+                weatherCtrl.highPressureDate = moment(parseInt(response.data.pressure.date)).format('HH:mm:ss');
             });
         };
 
@@ -66,6 +57,7 @@
             weatherCtrl.latestUpdateTimeInside = 'unavailable';
             weatherCtrl.highTempToday = 'unavailable';
             weatherCtrl.highHumidityToday = 'unavailable';
+            weatherCtrl.highPressureToday = 'unavailable';
 
             $http({
                 method: 'GET',
@@ -78,7 +70,7 @@
                     weatherCtrl.latestTempOutside = datum.temp;
                     weatherCtrl.latestHumidityOutside = datum.humidity + '%';
                     weatherCtrl.latestPressureOutside = datum.pressure;
-                    weatherCtrl.latestUpdateTimeOutside = moment(parseInt(datum.date)).format('dddd, MMM D, HH:mm:ss');
+                    weatherCtrl.latestUpdateTimeOutside = moment(parseInt(datum.date)).format('MM/DD/YY, HH:mm:ss');
                 } else {
                     console.log('api/latest_inside: Data undefined');
                 }
