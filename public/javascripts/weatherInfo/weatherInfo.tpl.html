@@ -19,7 +19,7 @@
                                 <span>Temperature: {{$ctrl.latestTempOutside}}</span>
                                 <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
                                 <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
-                                <span>Updated at: {{$ctrl.latestUpdateTimeOutside}}</span>
+                                <span>Last updated on {{$ctrl.latestUpdateTimeOutside}}</span>
                             </div>
                             <div layout="column">
                                 <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
@@ -32,15 +32,15 @@
                 <md-card md-theme="dark-green">
                     <md-card-title>
                         <md-card-title-text>
-                            <span class="md-headline">Inside</span>
+                            <span class="md-headline">Wunderground Data</span>
                         </md-card-title-text>
                     </md-card-title>
                     <md-card-content>
                         <div layout="column">
-                            <span>Temperature: {{$ctrl.latestTempInside}}</span>
-                            <span>Humidity: {{$ctrl.latestHumidityInside}}</span>
-                            <span>Pressure: {{$ctrl.latestPressureInside}}</span>
-                            <span>Updated at: {{$ctrl.latestUpdateTimeInside}}</span>
+                            <span>Current Temp: {{$ctrl.w_currTemp}}</span>
+                            <span>Current Humidity: {{$ctrl.w_currHumidity}}</span>
+                            <span>Pressure: {{$ctrl.w_currPressure}}</span>
+                            <span>{{$ctrl.w_updateTime}}</span>
                         </div>
                     </md-card-content>
                 </md-card>

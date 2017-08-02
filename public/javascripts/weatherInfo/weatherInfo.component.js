@@ -49,6 +49,23 @@
             });
         };
 
+        weatherCtrl.getWundergroundData = function() {
+            $http({
+                method: 'GET',
+                url: 'http://api.wunderground.com/api/fae65a96a64c4a3b/alerts/conditions/forecast/hourly/q/ID/Boise.json'
+            }).then(function(response) {
+                let current = response.data.current_observation;
+                let alerts = response.data.alerts;
+                let forecast3Day = response.data.forecast;
+                let forecastHourly = response.data.hourly_forecast;
+                weatherCtrl.w_currTemp = current.temp_f;
+                weatherCtrl.w_currHumidity = current.relative_humidity;
+                weatherCtrl.w_currPressure = current.pressure_in;
+                weatherCtrl.w_updateTime = current.observation_time;
+                console.log(response);
+            });
+        };
+
         weatherCtrl.getLatestInsideInfo = function() {
             let datum = [];
             weatherCtrl.latestTempInside = 'unavailable';
@@ -83,7 +100,8 @@
         };
 
         weatherCtrl.getLatestOutsideInfo();
-        weatherCtrl.getLatestInsideInfo();
+        // weatherCtrl.getLatestInsideInfo();
+        weatherCtrl.getWundergroundData();
         chartService.createOutsideChart();
         chartService.createInsideChart();
 
