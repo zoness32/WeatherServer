@@ -34,8 +34,29 @@
                 console.log("ERROR");
                 console.log(errRes);
             });
-        };
 
+
+            $http({
+                method: 'GET',
+                url: 'api/high_temp_for_day?unitId=1'
+            }).then(function(response) {
+                weatherCtrl.highTempToday = response.data;
+            });
+
+            $http({
+                method: 'GET',
+                url: 'api/high_humidity_for_day?unitId=1'
+            }).then(function(response) {
+                weatherCtrl.highHumidityToday = response.data;
+            });
+
+            $http({
+                method: 'GET',
+                url: 'api/high_pressure_for_day?unitId=1'
+            }).then(function(response) {
+                weatherCtrl.highPressureToday = response.data;
+            });
+        };
 
         weatherCtrl.getLatestInsideInfo = function() {
             let datum = [];
@@ -43,6 +64,8 @@
             weatherCtrl.latestHumidityInside = 'unavailable';
             weatherCtrl.latestPressureInside = 'unavailable';
             weatherCtrl.latestUpdateTimeInside = 'unavailable';
+            weatherCtrl.highTempToday = 'unavailable';
+            weatherCtrl.highHumidityToday = 'unavailable';
 
             $http({
                 method: 'GET',

@@ -17,6 +17,63 @@ router.get('/', function(req, res) {
     });
 });
 
+router.get('/high_temp_for_day', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let unitId = req.query.unitId;
+    let now = moment();
+    let beginning = moment([now.year(), now.month(), now.date()]);
+
+    if (unitId !== undefined && unitId >= 0) {
+        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
+            sort: {temp: -1},
+            limit: 1
+        }, function(err, data) {
+            if (err) throw err;
+            res.json(data[0].temp);
+        });
+    } else {
+        res.json({success: false, error: 'A unitId must be provided.'});
+    }
+});
+
+router.get('/high_humidity_for_day', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let unitId = req.query.unitId;
+    let now = moment();
+    let beginning = moment([now.year(), now.month(), now.date()]);
+
+    if (unitId !== undefined && unitId >= 0) {
+        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
+            sort: {humidity: -1},
+            limit: 1
+        }, function(err, data) {
+            if (err) throw err;
+            res.json(data[0].humidity);
+        });
+    } else {
+        res.json({success: false, error: 'A unitId must be provided.'});
+    }
+});
+
+router.get('/high_pressure_for_day', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let unitId = req.query.unitId;
+    let now = moment();
+    let beginning = moment([now.year(), now.month(), now.date()]);
+
+    if (unitId !== undefined && unitId >= 0) {
+        collection.find({unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}}, {
+            sort: {pressure: -1},
+            limit: 1
+        }, function(err, data) {
+            if (err) throw err;
+            res.json(data[0].pressure);
+        });
+    } else {
+        res.json({success: false, error: 'A unitId must be provided.'});
+    }
+});
+
 router.get('/info_in_range', function(req, res) {
     let collection = weather_db.get('weather_data');
     let min = req.query.min;
@@ -49,6 +106,30 @@ router.get('/info_in_range', function(req, res) {
                 max: max
             }
         });
+    }
+});
+
+router.post('/delete_documents', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let pass = req.query.password;
+    let num = req.query.num;
+    let numRemoved = 0;
+    if (pass === 'password' && num >= 1) {
+        collection.find({}, {limit: 159650}, function(err, data) {
+            if (err) throw err;
+            let array = data.map(function(doc) {
+                return doc._id;
+            });
+
+            collection.remove({_id: { $in: array }}, function(err, numOfRemovedDocs) {
+                numRemoved = numOfRemovedDocs;
+            });
+
+            res.json({success: true, numRemoved: numRemoved });
+        });
+
+    } else {
+        res.json({success: false, error: 'Invalid password or number'});
     }
 });
 
@@ -115,15 +196,15 @@ router.get('/createMockData', function createMockData(req, res) {
     let collection = weather_db.get('weather_data');
     let temp, humidity, pressure, unitId, date, now;
     let successful = true;
-    now = moment(1490813006000);
+    now = moment().subtract(10000, 'm');
 
-    let duration = moment.duration({'minutes' : 2});
+    let duration = moment.duration({'minutes': 2});
 
-    for (let i = 0; i < 64800; i++ && successful) {
+    for (let i = 0; i < 5000; i++ && successful) {
         temp = Math.floor(Math.random() * (100 - 32)) + 32;
         humidity = Math.floor(Math.random() * (60 - 20)) + 20;
         pressure = Math.floor(Math.random() * (34 - 25)) + 25;
-        unitId = '2';
+        unitId = '1';
         date = now;
 
         now = moment(now).add(duration);
@@ -156,7 +237,7 @@ router.get('/update_dates', function(req, res) {
             let oldDate = data[i].date;
             let newDate = moment(oldDate).format('x');
             // console.log(newDate);
-            collection.update({date: oldDate}, {$set: {date: newDate }}, function() {
+            collection.update({date: oldDate}, {$set: {date: newDate}}, function() {
                 // console.log('updated ' + i + '; oldDate: ' + oldDate + '; newDate: ' + newDate);
             });
         }
