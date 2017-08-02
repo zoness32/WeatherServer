@@ -58,9 +58,9 @@
                 let alerts = response.data.alerts;
                 let forecast3Day = response.data.forecast;
                 let forecastHourly = response.data.hourly_forecast;
-                weatherCtrl.w_currTemp = current.temp_f;
+                weatherCtrl.w_currTemp = current.temp_f + '\u00B0';
                 weatherCtrl.w_currHumidity = current.relative_humidity;
-                weatherCtrl.w_currPressure = current.pressure_in;
+                weatherCtrl.w_currPressure = current.pressure_in + ' inHg';
                 weatherCtrl.w_updateTime = current.observation_time;
                 console.log(response);
             });
