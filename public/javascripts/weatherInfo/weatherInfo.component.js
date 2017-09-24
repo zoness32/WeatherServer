@@ -5,6 +5,7 @@
         weatherCtrl.temp = [];
         weatherCtrl.pressure = [];
         weatherCtrl.labels = [];
+        weatherCtrl.old = false;
 
         weatherCtrl.getLatestOutsideInfo = function() {
             let datum = [];

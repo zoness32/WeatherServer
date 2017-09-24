@@ -1,54 +1,124 @@
-<div>
-    <md-card md-theme="dark-green">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">Current Weather</span>
-            </md-card-title-text>
-        </md-card-title>
-        <md-card-content>
-            <div layout="row">
-                <md-card class="md-primary md-hue-3">
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Outside</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                    <md-card-content>
-                        <div layout="row">
-                            <div layout="column">
-                                <span>Temperature: {{$ctrl.latestTempOutside}}</span>
-                                <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
-                                <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
-                                <span>Last updated on {{$ctrl.latestUpdateTimeOutside}}</span>
+<div layout="column">
+    <md-card md-theme="dark-green" flex="100">
+        <div ng-if="!$ctrl.old">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Current Weather</span>
+                </md-card-title-text>
+            </md-card-title>
+
+            <md-card-content>
+                <md-tabs md-dynamic-height md-border-bottom>
+                    <md-tab label="Outside">
+                        <md-content>
+                            <div layout="row">
+                                <md-card flex="25">
+                                    <md-card-content>
+                                        <div layout="column">
+                                            <div layout="column">
+                                                <h2>Current</h2>
+                                                <span>Temperature: {{$ctrl.latestTempOutside}}</span>
+                                                <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
+                                                <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
+                                                <span>Last updated on {{$ctrl.latestUpdateTimeOutside}}</span>
+                                            </div>
+
+                                            <div layout="column">
+                                                <h2>Highs</h2>
+                                                <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
+                                                <span>High Humidity: {{$ctrl.highHumidityToday}} at {{$ctrl.highHumidityDate}}</span>
+                                                <span>High Pressure: {{$ctrl.highPressureToday}} at {{$ctrl.highPressureDate}}</span>
+                                            </div>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                                <md-card flex="75">
+                                    <div layout="row">
+                                        <chart-component flex chart-title="Outside Weather Data"
+                                                         chart-id="outside-chart"></chart-component>
+                                    </div>
+                                </md-card>
                             </div>
-                            <div layout="column">
-                                <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
-                                <span>High Humidity: {{$ctrl.highHumidityToday}} at {{$ctrl.highHumidityDate}}</span>
-                                <span>High Pressure: {{$ctrl.highPressureToday}} at {{$ctrl.highPressureDate}}</span>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Wunderground">
+                        <md-content>
+                            <div layout="row">
+                                <md-card flex="25">
+                                    <md-card-content>
+                                        <div layout="column">
+                                            <span>Current Temp: {{$ctrl.w_currTemp}}</span>
+                                            <span>Current Humidity: {{$ctrl.w_currHumidity}}</span>
+                                            <span>Pressure: {{$ctrl.w_currPressure}}</span>
+                                            <span>{{$ctrl.w_updateTime}}</span>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                                <md-card>
+                                    <md-card-content>
+
+                                    </md-card-content>
+                                </md-card>
                             </div>
-                        </div>
-                    </md-card-content>
-                </md-card>
-                <md-card md-theme="dark-green">
-                    <md-card-title>
-                        <md-card-title-text>
-                            <span class="md-headline">Wunderground Data</span>
-                        </md-card-title-text>
-                    </md-card-title>
-                    <md-card-content>
-                        <div layout="column">
-                            <span>Current Temp: {{$ctrl.w_currTemp}}</span>
-                            <span>Current Humidity: {{$ctrl.w_currHumidity}}</span>
-                            <span>Pressure: {{$ctrl.w_currPressure}}</span>
-                            <span>{{$ctrl.w_updateTime}}</span>
-                        </div>
-                    </md-card-content>
-                </md-card>
-            </div>
-        </md-card-content>
+                        </md-content>
+                    </md-tab>
+                </md-tabs>
+
+            </md-card-content>
+        </div>
+
+
+        <div ng-if="$ctrl.old">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Current Weather</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+                <div layout="row">
+                    <md-card class="md-primary md-hue-3">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Outside</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <div layout="row">
+                                <div layout="column">
+                                    <span>Temperature: {{$ctrl.latestTempOutside}}</span>
+                                    <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
+                                    <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
+                                    <span>Last updated on {{$ctrl.latestUpdateTimeOutside}}</span>
+                                </div>
+                                <div layout="column">
+                                    <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
+                                    <span>High Humidity: {{$ctrl.highHumidityToday}} at {{$ctrl.highHumidityDate}}</span>
+                                    <span>High Pressure: {{$ctrl.highPressureToday}} at {{$ctrl.highPressureDate}}</span>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                    <md-card md-theme="dark-green">
+                        <md-card-title>
+                            <md-card-title-text>
+                                <span class="md-headline">Wunderground Data</span>
+                            </md-card-title-text>
+                        </md-card-title>
+                        <md-card-content>
+                            <div layout="column">
+                                <span>Current Temp: {{$ctrl.w_currTemp}}</span>
+                                <span>Current Humidity: {{$ctrl.w_currHumidity}}</span>
+                                <span>Pressure: {{$ctrl.w_currPressure}}</span>
+                                <span>{{$ctrl.w_updateTime}}</span>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </md-card-content>
+        </div>
     </md-card>
-    <div layout="row" layout-xs="column">
-        <chart-component flex chart-title="Outside Weather Data" chart-id="outside-chart"></chart-component>
-        <chart-component flex chart-title="Inside Weather Data" chart-id="inside-chart"></chart-component>
-    </div>
+    <!--<div layout="row" layout-xs="column">-->
+    <!--<chart-component flex chart-title="Outside Weather Data" chart-id="outside-chart"></chart-component>-->
+    <!--<chart-component flex chart-title="Inside Weather Data" chart-id="inside-chart"></chart-component>-->
+    <!--</div>-->
 </div>

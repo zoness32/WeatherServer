@@ -7,6 +7,7 @@
 let app = require('../app');
 let debug = require('debug')('Weather:server');
 let https = require('https');
+let http = require('http');
 let fs = require('fs');
 
 /**
@@ -20,13 +21,13 @@ app.set('port', port);
  * Create HTTPS server.
  */
 
-let sslOptions = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem'),
-  passphrase: 'weather'
-};
-
-let server = https.createServer(sslOptions, app);
+// let sslOptions = {
+//   key: fs.readFileSync('key.pem'),
+//   cert: fs.readFileSync('cert.pem'),
+//   passphrase: 'weather'
+// };
+//
+let server = http.createServer(/*sslOptions,*/ app);
 
 /**
  * Listen on provided port, on all network interfaces.

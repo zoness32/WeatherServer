@@ -50,8 +50,8 @@
             let min = moment();
             switch (chartId) {
                 case 'outside-chart':
-                    // apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'year').format('x') + '&max=' + max + '&unitId=1';
-                    apiUrl = 'api/all_outside';
+                    apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'week').format('x') + '&max=' + max + '&unitId=1';
+                    // apiUrl = 'api/all_outside';
                     break;
                 case 'inside-chart':
                     apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'month').format('x') + '&max=' + max + '&unitId=2';
