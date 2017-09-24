@@ -61,6 +61,50 @@ router.get('/highs', function(req, res) {
     }
 });
 
+router.get('/lows', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let unitId = req.query.unitId;
+    let now = moment();
+    let beginning = moment([now.year(), now.month(), now.date()]);
+
+    if (unitId !== undefined && unitId >= 0) {
+        let findObject = {unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}};
+        collection.find(findObject, {
+            sort: {temp: 1},
+            limit: 1
+        }, function(err, tempData) {
+            if (err) throw err;
+            collection.find(findObject, {
+                sort: {humidity: 1},
+                limit: 1
+            }, function(err, humidityData) {
+                if (err) throw err;
+                collection.find(findObject, {
+                    sort: {pressure: 1},
+                    limit: 1
+                }, function(err, pressureData) {
+                    if (err) throw err;
+                    let tempObj = {
+                        temp: tempData[0].temp,
+                        date: tempData[0].date
+                    };
+                    let humiObj = {
+                        humidity: humidityData[0].humidity,
+                        date: humidityData[0].date
+                    };
+                    let pressureObj = {
+                        pressure: pressureData[0].pressure,
+                        date: pressureData[0].date
+                    };
+                    res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
+                });
+            });
+        });
+    } else {
+        res.json({success: false, error: 'A unitId must be provided.'});
+    }
+});
+
 router.get('/info_in_range', function(req, res) {
     let collection = weather_db.get('weather_data');
     let min = req.query.min;

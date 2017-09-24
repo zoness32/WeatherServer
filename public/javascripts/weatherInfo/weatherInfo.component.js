@@ -36,7 +36,6 @@
                 console.log(errRes);
             });
 
-
             $http({
                 method: 'GET',
                 url: 'api/highs?unitId=1'
@@ -47,6 +46,18 @@
                 weatherCtrl.highHumidityDate = moment(parseInt(response.data.humidity.date)).format('HH:mm:ss');
                 weatherCtrl.highPressureToday = response.data.pressure.pressure + ' inHg';
                 weatherCtrl.highPressureDate = moment(parseInt(response.data.pressure.date)).format('HH:mm:ss');
+            });
+
+            $http({
+                method: 'GET',
+                url: 'api/lows?unitId=1'
+            }).then(function(response) {
+                weatherCtrl.lowTempToday = response.data.temp.temp + '\u00B0';
+                weatherCtrl.lowTempDate = moment(parseInt(response.data.temp.date)).format('HH:mm:ss');
+                weatherCtrl.lowHumidityToday = response.data.humidity.humidity + '%';
+                weatherCtrl.lowHumidityDate = moment(parseInt(response.data.humidity.date)).format('HH:mm:ss');
+                weatherCtrl.lowPressureToday = response.data.pressure.pressure + ' inHg';
+                weatherCtrl.lowPressureDate = moment(parseInt(response.data.pressure.date)).format('HH:mm:ss');
             });
         };
 
