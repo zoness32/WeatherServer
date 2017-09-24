@@ -11,8 +11,8 @@
                 <md-tabs md-dynamic-height md-border-bottom>
                     <md-tab label="Outside">
                         <md-content>
-                            <div layout="row">
-                                <md-card flex="25">
+                            <div layout="row" layout-xs="column">
+                                <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
                                             <div layout="column">
@@ -32,14 +32,14 @@
 
                                             <div layout="column">
                                                 <h2>Lows</h2>
-                                                <span>High Temp: {{$ctrl.lowTempToday}} at {{$ctrl.lowTempDate}}</span>
-                                                <span>High Humidity: {{$ctrl.lowHumidityToday}} at {{$ctrl.lowHumidityDate}}</span>
-                                                <span>High Pressure: {{$ctrl.lowPressureToday}} at {{$ctrl.lowPressureDate}}</span>
+                                                <span>Low Temp: {{$ctrl.lowTempToday}} at {{$ctrl.lowTempDate}}</span>
+                                                <span>Low Humidity: {{$ctrl.lowHumidityToday}} at {{$ctrl.lowHumidityDate}}</span>
+                                                <span>Low Pressure: {{$ctrl.lowPressureToday}} at {{$ctrl.lowPressureDate}}</span>
                                             </div>
                                         </div>
                                     </md-card-content>
                                 </md-card>
-                                <md-card flex="75">
+                                <md-card flex-gt-xs="75" flex="100">
                                     <div layout="row">
                                         <chart-component flex chart-title="Outside Weather Data"
                                                          chart-id="outside-chart"></chart-component>
@@ -50,8 +50,8 @@
                     </md-tab>
                     <md-tab label="Wunderground">
                         <md-content>
-                            <div layout="row">
-                                <md-card flex="25">
+                            <div layout-gt-xs="row" layout="column">
+                                <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
                                             <span>Current Temp: {{$ctrl.w_currTemp}}</span>
@@ -61,7 +61,7 @@
                                         </div>
                                     </md-card-content>
                                 </md-card>
-                                <md-card>
+                                <md-card flex-gt-xs="75" flex="100">
                                     <md-card-content>
 
                                     </md-card-content>
