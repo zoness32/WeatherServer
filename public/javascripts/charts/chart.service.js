@@ -1,7 +1,93 @@
 (function() {
     let chartServiceFunc = function($http, moment) {
         let chartService = this;
-        chartService._ = {};
+        chartService._ = {
+            colorArray: [{
+                value: -20,
+                color: '#FF00FF'
+            }, {
+                value: -15,
+                color: '#D100FF'
+            }, {
+                value: -10,
+                color: '#9E00FF'
+            }, {
+                value: -5,
+                color: '#6600FF'
+            }, {
+                value: 0,
+                color: '#0000FF'
+            }, {
+                value: 5,
+                color: '#004AFF'
+            }, {
+                value: 10,
+                color: '#0073FF'
+            }, {
+                value: 15,
+                color: '#00A3FF'
+            }, {
+                value: 20,
+                color: '#00CCFF'
+            }, {
+                value: 25,
+                color: '#00E6FF'
+            }, {
+                value: 30,
+                color: '#00FFFF'
+            }, {
+                value: 35,
+                color: '#00FFB3'
+            }, {
+                value: 40,
+                color: '#7FFF00'
+            }, {
+                value: 45,
+                color: '#CEFF00'
+            }, {
+                value: 50,
+                color: '#FFFF00'
+            }, {
+                value: 55,
+                color: '#FFE600'
+            }, {
+                value: 60,
+                color: '#FFCC00'
+            }, {
+                value: 65,
+                color: '#FFAE00'
+            }, {
+                value: 70,
+                color: '#FF9900'
+            }, {
+                value: 75,
+                color: '#FF7F00'
+            }, {
+                value: 80,
+                color: '#FF4F00'
+            }, {
+                value: 85,
+                color: '#FF0000'
+            }, {
+                value: 90,
+                color: '#FF4545'
+            }, {
+                value: 95,
+                color: '#FF6868'
+            }, {
+                value: 100,
+                color: '#FF8787'
+            }, {
+                value: 105,
+                color: '#FF9E9E'
+            }, {
+                value: 110,
+                color: '#FFB5B5'
+            }, {
+                value: 115,
+                color: '#FFCFCF'
+            }]
+        };
 
         chartService.afterSetExtremes = function(e) {
             let chart = Highcharts.charts[0];
@@ -44,6 +130,124 @@
             });
         };
 
+        chartService.createDarkSkyChart = function(data) {
+            Highcharts.setOptions({
+                global: {
+                    timezone: 'America/Denver'
+                }
+            });
+
+            // create the chart
+            Highcharts.stockChart('dark-sky', {
+                rangeSelector: {
+                    buttons: [
+                        {count: 1, text: "Week", type: "week"}
+                    ],
+                    selected: 0,
+                    inputStyle: {
+                        color: '#000'
+                    }
+                },
+
+                xAxis: {
+                    type: 'datetime',
+                    events: {
+                        // afterSetExtremes: chartService.afterSetExtremes
+                    },
+                    minRange: 1000 * 3600 // one hour
+                },
+
+                yAxis: [{
+                    labels: {
+                        align: 'left',
+                        x: 8,
+                        y: 5
+                    },
+                    title: {
+                        text: 'Temperature'
+                    },
+                    height: '40%',
+                    lineWidth: 2
+                }, {
+                    labels: {
+                        align: 'left',
+                        x: 8,
+                        y: 5
+                    },
+                    title: {
+                        text: 'Humidity'
+                    },
+                    top: '45%',
+                    height: '35%',
+                    offset: 0,
+                    lineWidth: 2
+                }, {
+                    labels: {
+                        align: 'left',
+                        x: 8,
+                        y: 5
+                    },
+                    title: {
+                        text: 'Pressure'
+                    },
+                    top: '85%',
+                    height: '20%',
+                    offset: 0,
+                    lineWidth: 2
+                }],
+
+                series: [{
+                    type: 'line',
+                    name: 'Temperature',
+                    data: data.t,
+                    tooltip: {
+                        valueDecimals: 2
+                    },
+                    zones: chartService._.colorArray
+                }, {
+                    type: 'line',
+                    name: 'Humidity',
+                    data: data.h,
+                    yAxis: 1,
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                }, {
+                    type: 'line',
+                    name: 'Pressure',
+                    data: data.p,
+                    yAxis: 2,
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                }],
+
+                plotOptions: {
+                    series: {
+                        groupPixelWidth: 20,
+                        forced: true,
+                        units: [
+                            // [
+                            //     'millisecond', // unit name
+                            //     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                            // ],
+                            // [
+                            //     'second',
+                            //     [1, 2, 5, 10, 15, 30]
+                            // ],
+                            [
+                                'minute',
+                                [10, 30]
+                            ],
+                            [
+                                'hour',
+                                [2, 4, 6, 8, 12]
+                            ]]
+                    }
+                },
+            });
+        };
+
         chartService._.createChart = function(chartId) {
             let apiUrl = "";
             let max = moment();
@@ -62,7 +266,6 @@
                 method: 'GET',
                 url: apiUrl
             }).then(function(data) {
-                // split the data set into ohlc and volume
                 let temp = [], humidity = [], pressure = [];
                 let dataArray = data.data;
                 // set the allowed units for data grouping
@@ -172,91 +375,7 @@
                         tooltip: {
                             valueDecimals: 2
                         },
-                        zones: [{
-                            value: -20,
-                            color: '#FF00FF'
-                        }, {
-                            value: -15,
-                            color: '#D100FF'
-                        }, {
-                            value: -10,
-                            color: '#9E00FF'
-                        }, {
-                            value: -5,
-                            color: '#6600FF'
-                        }, {
-                            value: 0,
-                            color: '#0000FF'
-                        }, {
-                            value: 5,
-                            color: '#004AFF'
-                        }, {
-                            value: 10,
-                            color: '#0073FF'
-                        }, {
-                            value: 15,
-                            color: '#00A3FF'
-                        }, {
-                            value: 20,
-                            color: '#00CCFF'
-                        }, {
-                            value: 25,
-                            color: '#00E6FF'
-                        }, {
-                            value: 30,
-                            color: '#00FFFF'
-                        }, {
-                            value: 35,
-                            color: '#00FFB3'
-                        }, {
-                            value: 40,
-                            color: '#7FFF00'
-                        }, {
-                            value: 45,
-                            color: '#CEFF00'
-                        }, {
-                            value: 50,
-                            color: '#FFFF00'
-                        }, {
-                            value: 55,
-                            color: '#FFE600'
-                        }, {
-                            value: 60,
-                            color: '#FFCC00'
-                        }, {
-                            value: 65,
-                            color: '#FFAE00'
-                        }, {
-                            value: 70,
-                            color: '#FF9900'
-                        }, {
-                            value: 75,
-                            color: '#FF7F00'
-                        }, {
-                            value: 80,
-                            color: '#FF4F00'
-                        }, {
-                            value: 85,
-                            color: '#FF0000'
-                        }, {
-                            value: 90,
-                            color: '#FF4545'
-                        }, {
-                            value: 95,
-                            color: '#FF6868'
-                        }, {
-                            value: 100,
-                            color: '#FF8787'
-                        }, {
-                            value: 105,
-                            color: '#FF9E9E'
-                        }, {
-                            value: 110,
-                            color: '#FFB5B5'
-                        }, {
-                            value: 115,
-                            color: '#FFCFCF'
-                        },]
+                        zones: chartService._.colorArray
                     }, {
                         type: 'line',
                         name: 'Humidity',

@@ -2,6 +2,7 @@ let express = require('express');
 let router = express.Router();
 let _ = require('lodash');
 let http = require('http');
+let https = require('https');
 let querystring = require('querystring');
 let moment = require('moment');
 
@@ -40,19 +41,26 @@ router.get('/highs', function(req, res) {
                     limit: 1
                 }, function(err, pressureData) {
                     if (err) throw err;
-                    let tempObj = {
-                        temp: tempData[0].temp,
-                        date: tempData[0].date
-                    };
-                    let humiObj = {
-                        humidity: humidityData[0].humidity,
-                        date: humidityData[0].date
-                    };
-                    let pressureObj = {
-                        pressure: pressureData[0].pressure,
-                        date: pressureData[0].date
-                    };
-                    res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
+                    if (tempData.length === 0 || humidityData.length === 0 || pressureData.length === 0) {
+                        res.json({error: 'Undefined data', data: {t: tempData, h: humidityData, p: pressureData}});
+                    } else {
+                        let tempObj = {
+                            temp: tempData[0].temp,
+                            date: tempData[0].date
+                        };
+
+                        let humiObj = {
+                            humidity: humidityData[0].humidity,
+                            date: humidityData[0].date
+                        };
+
+                        let pressureObj = {
+                            pressure: pressureData[0].pressure,
+                            date: pressureData[0].date
+                        };
+
+                        res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
+                    }
                 });
             });
         });
@@ -218,7 +226,7 @@ router.get('/extreme', function getExtreme(req, res) {
     let collection = weather_db.get('weather_data');
     collection.aggregate([{$group: {_id: 278, temp: {$max: "$temp"}}}], function(err, data) {
         if (err) throw err;
-        console.log(data);
+
         res.json(data);
     });
 });
@@ -227,9 +235,7 @@ router.get('/createMockData', function createMockData(req, res) {
     let collection = weather_db.get('weather_data');
     let temp, humidity, pressure, unitId, date, now;
     let successful = true;
-    now = moment().subtract(10000, 'm');
-
-    let duration = moment.duration({'minutes': 2});
+    now = moment().subtract(10000, 'minutes');
 
     for (let i = 0; i < 5000; i++ && successful) {
         temp = Math.floor(Math.random() * (100 - 32)) + 32;
@@ -238,7 +244,7 @@ router.get('/createMockData', function createMockData(req, res) {
         unitId = '1';
         date = now;
 
-        now = moment(now).add(duration);
+        now = moment(now).add(2, 'minutes');
 
         collection.insert({
             humidity: humidity,
@@ -277,6 +283,44 @@ router.get('/update_dates', function(req, res) {
         res.json({
             success: true
         });
+    });
+});
+
+router.get('/dark_sky', function(req, res) {
+    https.get('https://api.darksky.net/forecast/38c87f88243c729b8e60e95fbe41a8c2/43.586439,-116.610291?extend=hourly', (response) => {
+        const {statusCode} = response;
+        const contentType = response.headers['content-type'];
+
+        let error;
+        if (statusCode !== 200) {
+            error = new Error('Request Failed.\n' +
+                `Status Code: ${statusCode}`);
+        } else if (!/^application\/json/.test(contentType)) {
+            error = new Error('Invalid content-type.\n' +
+                `Expected application/json but received ${contentType}`);
+        }
+        if (error) {
+            console.error(error.message);
+            // consume response data to free up memory
+            response.resume();
+            return;
+        }
+
+        response.setEncoding('utf8');
+        let rawData = '';
+        response.on('data', (chunk) => {
+            rawData += chunk;
+        });
+        response.on('end', () => {
+            try {
+                const parsedData = JSON.parse(rawData);
+                res.json(parsedData);
+            } catch (e) {
+                console.error(e.message);
+            }
+        });
+    }).on('error', (e) => {
+        console.error(`Got error: ${e.message}`);
     });
 });
 

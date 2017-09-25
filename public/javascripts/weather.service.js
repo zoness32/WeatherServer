@@ -1,115 +1,75 @@
 (function() {
-    let weatherServiceFunc = function() {
+    let weatherServiceFunc = function($http, $q, DarkSkyService) {
         let weatherService = this;
 
-        weatherService.humidity = [];
-        weatherService.temp = [];
-        weatherService.pressure = [];
-        weatherService.labels = [];
-
-        weatherService.setLatestUpdate = function(update) {
-            weatherService.latest = update;
-        };
-
         weatherService.getLatestOutsideInfo = function() {
-            let datum = [];
-
-            $http({
-                method: 'GET',
-                url: 'api/latest_outside'
-            }).then(function(latest) {
-                datum = latest.data[0];
-
-                weatherService.latestTempOutside = datum.temp || "unavailable";
-                weatherService.latestHumidityOutside = datum.humidity || "unavailable";
-                weatherService.latestPressureOutside = datum.pressure || "unavailable";
-
-                let options = {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    timeZoneName: "short",
-                    hour12: false
-                };
-
-                weatherService.latestUpdateTimeOutside = new Intl.DateTimeFormat("en-US", options).format(new Date(datum.date));
-            }).catch(function(errRes) {
-                console.log("ERROR");
-                console.log(errRes);
-            });
+            return $http.get('api/latest_outside')
+                .then(function(latest) {
+                    datum = latest.data[0];
+                    if (!angular.isUndefined(datum) && !angular.isUndefined(datum.temp) &&
+                        !angular.isUndefined(datum.humidity) && !angular.isUndefined(datum.pressure) &&
+                        !angular.isUndefined(datum.date)) {
+                        return {
+                            t: datum.temp + '\u00B0',
+                            h: datum.humidity + '%',
+                            p: datum.pressure + ' inHg',
+                            update: moment(parseInt(datum.date)).format('MM/DD/YY, HH:mm:ss')
+                        }
+                    } else {
+                        console.log('api/latest_outside: Data undefined');
+                        return {error: 'something went wrong'};
+                    }
+                }, function(err) {
+                    console.log('api/latest_outside: promise rejected   ' + err);
+                    return {error: err};
+                }).catch(function(errRes) {
+                    return {error: errRes};
+                });
         };
 
-        weatherService.getLatestInsideInfo = function() {
-            let datum = [];
-
-            $http({
-                method: 'GET',
-                url: 'api/latest_inside'
-            }).then(function(latest) {
-                datum = latest.data[0];
-
-                weatherService.latestTempInside = datum.temp || "unavailable";
-                weatherService.latestHumidityInside = datum.humidity || "unavailable";
-                weatherService.latestPressureInside = datum.pressure || "unavailable";
-
-                let options = {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    timeZoneName: "short",
-                    hour12: false
-                };
-
-                weatherService.latestUpdateTimeInside = new Intl.DateTimeFormat("en-US", options).format(new Date(datum.date));
-            }, function(error) {
-                console.log(error);
-                weatherService.latestTempInside = "unavailable";
-            }).catch(function(errRes) {
-                console.log("ERROR");
-                console.log(errRes);
-            });
+        weatherService.getLatestOutsideHighs = function() {
+            return $http.get('api/highs?unitId=1')
+                .then(function(response) {
+                    return {
+                        t: response.data.temp.temp + '\u00B0',
+                        tdate: moment(parseInt(response.data.temp.date)).format('HH:mm:ss'),
+                        h: response.data.humidity.humidity + '%',
+                        hdate: moment(parseInt(response.data.humidity.date)).format('HH:mm:ss'),
+                        p: response.data.pressure.pressure + ' inHg',
+                        pdate: moment(parseInt(response.data.pressure.date)).format('HH:mm:ss')
+                    }
+                }, function(error) {
+                    console.log(error);
+                    return {error: error};
+                });
         };
 
-        weatherService.getExtremeForDate = function(date) {
-            let datum = [];
+        weatherService.getLatestOutsideLows = function() {
+            return $http.get('api/lows?unitId=1')
+                .then(function(response) {
+                    return {
+                        t: response.data.temp.temp + '\u00B0',
+                        tdate: moment(parseInt(response.data.temp.date)).format('HH:mm:ss'),
+                        h: response.data.humidity.humidity + '%',
+                        hdate: moment(parseInt(response.data.humidity.date)).format('HH:mm:ss'),
+                        p: response.data.pressure.pressure + ' inHg',
+                        pdate: moment(parseInt(response.data.pressure.date)).format('HH:mm:ss')
+                    }
+                }, function(error) {
+                    console.log(error);
+                    return {error: error};
+                });
+        };
 
-            $http({
-                method: 'GET',
-                url: 'api/extreme',
-                data: date
-            }).then(function(latest) {
-                datum = latest.data[0];
-
-                weatherService.latestTempOutside = datum.temp || "unavailable";
-                weatherService.latestHumidityOutside = datum.humidity || "unavailable";
-                weatherService.latestPressureOutside = datum.pressure || "unavailable";
-
-                let options = {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    timeZoneName: "short",
-                    hour12: false
-                };
-
-                weatherService.latestUpdateTimeOutside = new Intl.DateTimeFormat("en-US", options).format(new Date(datum.date));
-            }).catch(function(errRes) {
-                console.log("ERROR");
-                console.log(errRes);
-            });
+        weatherService.getDarkSkyData = function() {
+            return DarkSkyService.getData()
+                .then(function(response) {
+                    return response;
+                });
         };
 
         return weatherService;
     };
 
-    angular.module('Weather').service('weatherService', [weatherServiceFunc]);
+    angular.module('Weather').service('WeatherService', ['$http', '$q', 'DarkSkyService', weatherServiceFunc]);
 })();

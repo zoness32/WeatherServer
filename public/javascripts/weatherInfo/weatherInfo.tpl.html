@@ -15,26 +15,26 @@
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
-                                            <div layout="column">
+                                            <div layout="column" ng-if="$ctrl.showCurrent">
                                                 <h2>Current</h2>
-                                                <span>Temperature: {{$ctrl.latestTempOutside}}</span>
-                                                <span>Humidity: {{$ctrl.latestHumidityOutside}}</span>
-                                                <span>Pressure: {{$ctrl.latestPressureOutside}}</span>
-                                                <span>Last updated on {{$ctrl.latestUpdateTimeOutside}}</span>
+                                                <span>Temperature: {{$ctrl.currt}}</span>
+                                                <span>Humidity: {{$ctrl.currh}}</span>
+                                                <span>Pressure: {{$ctrl.currp}}</span>
+                                                <span>Last updated on {{$ctrl.currdate}}</span>
                                             </div>
 
-                                            <div layout="column">
+                                            <div layout="column" ng-if="$ctrl.showHighs">
                                                 <h2>Highs</h2>
-                                                <span>High Temp: {{$ctrl.highTempToday}} at {{$ctrl.highTempDate}}</span>
-                                                <span>High Humidity: {{$ctrl.highHumidityToday}} at {{$ctrl.highHumidityDate}}</span>
-                                                <span>High Pressure: {{$ctrl.highPressureToday}} at {{$ctrl.highPressureDate}}</span>
+                                                <span>High Temp: {{$ctrl.hight}} at {{$ctrl.hightdate}}</span>
+                                                <span>High Humidity: {{$ctrl.highh}} at {{$ctrl.highhdate}}</span>
+                                                <span>High Pressure: {{$ctrl.highp}} at {{$ctrl.highpdate}}</span>
                                             </div>
 
-                                            <div layout="column">
+                                            <div layout="column" ng-if="$ctrl.showLows">
                                                 <h2>Lows</h2>
-                                                <span>Low Temp: {{$ctrl.lowTempToday}} at {{$ctrl.lowTempDate}}</span>
-                                                <span>Low Humidity: {{$ctrl.lowHumidityToday}} at {{$ctrl.lowHumidityDate}}</span>
-                                                <span>Low Pressure: {{$ctrl.lowPressureToday}} at {{$ctrl.lowPressureDate}}</span>
+                                                <span>Low Temp: {{$ctrl.lowt}} at {{$ctrl.lowtdate}}</span>
+                                                <span>Low Humidity: {{$ctrl.lowh}} at {{$ctrl.lowhdate}}</span>
+                                                <span>Low Pressure: {{$ctrl.lowp}} at {{$ctrl.lowpdate}}</span>
                                             </div>
                                         </div>
                                     </md-card-content>
@@ -54,6 +54,7 @@
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
+                                            <h2>Current</h2>
                                             <span>Current Temp: {{$ctrl.w_currTemp}}</span>
                                             <span>Current Humidity: {{$ctrl.w_currHumidity}}</span>
                                             <span>Pressure: {{$ctrl.w_currPressure}}</span>
@@ -64,6 +65,41 @@
                                 <md-card flex-gt-xs="75" flex="100">
                                     <md-card-content>
 
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Dark Sky">
+                        <md-content>
+                            <div layout-gt-xs="row" layout="column">
+                                <md-card flex-gt-xs="25" flex="100">
+                                    <md-card-content>
+                                        <div layout="column">
+                                                <h2>Current Conditions</h2>
+                                            <span>Updated: {{$ctrl.dsCurrently.time}}</span></span>
+                                            <br>
+                                            <span>Current Temp: {{$ctrl.dsCurrently.t}}</span>
+                                            <span>Feels Like: {{$ctrl.dsCurrently.apparent_t}}</span>
+                                            <span>Current Humidity: {{$ctrl.dsCurrently.h}}</span>
+                                            <span>Current Pressure: {{$ctrl.dsCurrently.p}}</span>
+                                            <span>Dew Point:    {{$ctrl.dsCurrently.dewPoint}}</span>
+                                            <span>Wind: {{$ctrl.dsCurrently.windSpeed}}mph {{$ctrl.dsCurrently.windBearing}}</span>
+                                            <span>Visibility: {{$ctrl.dsCurrently.visibility}}</span>
+
+                                            <h3>Precipitation</h3>
+                                            <span>Chance: {{$ctrl.dsCurrently.precipProbability}}</span>
+                                            <span>Cloud Cover: {{$ctrl.dsCurrently.cloudCover}}</span>
+                                            <span>Nearest Storm: {{$ctrl.dsCurrently.stormDistance}}</span>
+                                            <span ng-if="$ctrl.dsCurrently.precipType">Type: {{$ctrl.dsCurrently.precipType}}</span>
+                                            <span ng-if="$ctrl.dsCurrently.precipProbability > 0">Intensity: {{$ctrl.dsCurrently.precipIntensity}}</span>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                                <md-card flex-gt-xs="75" flex="100">
+                                    <md-card-content>
+                                        <chart-component flex chart-title="Dark Sky Data"
+                                                         chart-id="dark-sky"></chart-component>
                                     </md-card-content>
                                 </md-card>
                             </div>
