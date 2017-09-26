@@ -1,5 +1,5 @@
 (function() {
-    let weatherServiceFunc = function($http, $q, DarkSkyService) {
+    let weatherServiceFunc = function($http, format) {
         let weatherService = this;
 
         weatherService.getLatestOutsideInfo = function() {
@@ -10,10 +10,10 @@
                         !angular.isUndefined(datum.humidity) && !angular.isUndefined(datum.pressure) &&
                         !angular.isUndefined(datum.date)) {
                         return {
-                            t: datum.temp + '\u00B0',
-                            h: datum.humidity + '%',
-                            p: datum.pressure + ' inHg',
-                            update: moment(parseInt(datum.date)).format('MM/DD/YY, HH:mm:ss')
+                            t: format.temp(datum.temp),
+                            h: format.percentage(datum.humidity),
+                            p: format.inHg(datum.pressure),
+                            update: format.timeWithMMDDYY(datum.date)
                         }
                     } else {
                         console.log('api/latest_outside: Data undefined');
@@ -31,12 +31,12 @@
             return $http.get('api/highs?unitId=1')
                 .then(function(response) {
                     return {
-                        t: response.data.temp.temp + '\u00B0',
-                        tdate: moment(parseInt(response.data.temp.date)).format('HH:mm:ss'),
-                        h: response.data.humidity.humidity + '%',
-                        hdate: moment(parseInt(response.data.humidity.date)).format('HH:mm:ss'),
-                        p: response.data.pressure.pressure + ' inHg',
-                        pdate: moment(parseInt(response.data.pressure.date)).format('HH:mm:ss')
+                        t: format.temp(response.data.temp.temp),
+                        tdate: format.time(response.data.temp.date),
+                        h: format.percentage(response.data.humidity.humidity),
+                        hdate: format.time(response.data.humidity.date),
+                        p: format.inHg(response.data.pressure.pressure),
+                        pdate: format.time(response.data.pressure.date)
                     }
                 }, function(error) {
                     console.log(error);
@@ -48,12 +48,12 @@
             return $http.get('api/lows?unitId=1')
                 .then(function(response) {
                     return {
-                        t: response.data.temp.temp + '\u00B0',
-                        tdate: moment(parseInt(response.data.temp.date)).format('HH:mm:ss'),
-                        h: response.data.humidity.humidity + '%',
-                        hdate: moment(parseInt(response.data.humidity.date)).format('HH:mm:ss'),
-                        p: response.data.pressure.pressure + ' inHg',
-                        pdate: moment(parseInt(response.data.pressure.date)).format('HH:mm:ss')
+                        t: format.temp(response.data.temp.temp),
+                        tdate: format.time(response.data.temp.date),
+                        h: format.percentage(response.data.humidity.humidity),
+                        hdate: format.time(response.data.humidity.date),
+                        p: format.inHg(response.data.pressure.pressure),
+                        pdate: format.time(response.data.pressure.date)
                     }
                 }, function(error) {
                     console.log(error);
@@ -61,15 +61,8 @@
                 });
         };
 
-        weatherService.getDarkSkyData = function() {
-            return DarkSkyService.getData()
-                .then(function(response) {
-                    return response;
-                });
-        };
-
         return weatherService;
     };
 
-    angular.module('Weather').service('WeatherService', ['$http', '$q', 'DarkSkyService', weatherServiceFunc]);
+    angular.module('Weather').service('WeatherService', ['$http', 'format', weatherServiceFunc]);
 })();

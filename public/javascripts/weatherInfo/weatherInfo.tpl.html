@@ -15,6 +15,17 @@
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
+                                            <div layout="column" ng-if="$ctrl.showForecast">
+                                                <h2>Today's Forecast</h2>
+                                                <h4>{{$ctrl.ds.forecastSummary}}</h4>
+                                                <span>High: {{$ctrl.ds.forecastHigh}} at {{$ctrl.ds.forecastHighTime}}</span>
+                                                <span>Low: {{$ctrl.ds.forecastLow}} at {{$ctrl.ds.forecastLowTime}}</span>
+                                                <span>Chance of {{$ctrl.ds.forecastPrecipType}}: {{$ctrl.ds.forecastPrecipChance}}</span>
+                                                <span>Cloud cover: {{$ctrl.ds.forecastCloudCover}}</span>
+                                                <span>Wind: {{$ctrl.ds.forecastWindSpeed}} {{$ctrl.ds.forecastWindBearing}}, with gusts up to {{$ctrl.ds.forecastGust}} around {{$ctrl.ds.forecastGustTime}}</span>
+                                                <span>Visibility: {{$ctrl.ds.forecastVisibility}}</span>
+                                            </div>
+
                                             <div layout="column" ng-if="$ctrl.showCurrent">
                                                 <h2>Current</h2>
                                                 <span>Temperature: {{$ctrl.currt}}</span>
@@ -75,25 +86,7 @@
                             <div layout-gt-xs="row" layout="column">
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
-                                        <div layout="column">
-                                                <h2>Current Conditions</h2>
-                                            <span>Updated: {{$ctrl.dsCurrently.time}}</span></span>
-                                            <br>
-                                            <span>Current Temp: {{$ctrl.dsCurrently.t}}</span>
-                                            <span>Feels Like: {{$ctrl.dsCurrently.apparent_t}}</span>
-                                            <span>Current Humidity: {{$ctrl.dsCurrently.h}}</span>
-                                            <span>Current Pressure: {{$ctrl.dsCurrently.p}}</span>
-                                            <span>Dew Point:    {{$ctrl.dsCurrently.dewPoint}}</span>
-                                            <span>Wind: {{$ctrl.dsCurrently.windSpeed}}mph {{$ctrl.dsCurrently.windBearing}}</span>
-                                            <span>Visibility: {{$ctrl.dsCurrently.visibility}}</span>
-
-                                            <h3>Precipitation</h3>
-                                            <span>Chance: {{$ctrl.dsCurrently.precipProbability}}</span>
-                                            <span>Cloud Cover: {{$ctrl.dsCurrently.cloudCover}}</span>
-                                            <span>Nearest Storm: {{$ctrl.dsCurrently.stormDistance}}</span>
-                                            <span ng-if="$ctrl.dsCurrently.precipType">Type: {{$ctrl.dsCurrently.precipType}}</span>
-                                            <span ng-if="$ctrl.dsCurrently.precipProbability > 0">Intensity: {{$ctrl.dsCurrently.precipIntensity}}</span>
-                                        </div>
+                                        <dark-sky></dark-sky>
                                     </md-card-content>
                                 </md-card>
                                 <md-card flex-gt-xs="75" flex="100">

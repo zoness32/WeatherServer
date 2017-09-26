@@ -1,0 +1,19 @@
+<div layout="column">
+    <h2>Current Conditions</h2>
+    <span>Updated: {{$ctrl.currently.time}}</span></span>
+    <br>
+    <span>Current Temp: {{$ctrl.currently.t}}</span>
+    <span>Feels Like: {{$ctrl.currently.apparent_t}}</span>
+    <span>Current Humidity: {{$ctrl.currently.h}}</span>
+    <span>Current Pressure: {{$ctrl.currently.p}}</span>
+    <span>Dew Point:    {{$ctrl.currently.dewPoint}}</span>
+    <span>Wind: {{$ctrl.currently.windSpeed}}mph {{$ctrl.currently.windBearing}}</span>
+    <span>Visibility: {{$ctrl.currently.visibility}}</span>
+
+    <h3>Precipitation</h3>
+    <span>Chance: {{$ctrl.currently.precipProbability}}</span>
+    <span>Cloud Cover: {{$ctrl.currently.cloudCover}}</span>
+    <span>Nearest Storm: {{$ctrl.currently.stormDistance}}</span>
+    <span ng-if="$ctrl.currently.precipType">Type: {{$ctrl.currently.precipType}}</span>
+    <span ng-if="$ctrl.currently.precipProbability > 0">Intensity: {{$ctrl.currently.precipIntensity}}</span>
+</div>

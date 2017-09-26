@@ -1,5 +1,5 @@
 (function() {
-    let WeatherComponent = function($http, chartService, moment, WeatherService) {
+    let WeatherComponent = function($http, chartService, moment, WeatherService, DarkSkyService, format) {
         let weatherCtrl = this;
         weatherCtrl.humidity = [];
         weatherCtrl.temp = [];
@@ -9,6 +9,7 @@
         weatherCtrl.showLows = false;
         weatherCtrl.showHighs = false;
         weatherCtrl.showCurrent = false;
+        weatherCtrl.showForecast = false;
 
         weatherCtrl.getLatestOutsideInfo = function() {
             weatherCtrl.latestTempOutside = 'unavailable';
@@ -57,99 +58,6 @@
             });
         };
 
-        weatherCtrl.getWindDirection = function(bearing) {
-            let direction = '';
-
-            let N = 348.75;
-            let N2 = 0;
-            let NNE = 11.25;
-            let NE = 33.75;
-            let ENE = 56.25;
-            let E = 78.75;
-            let ESE = 101.25;
-            let SE = 123.75;
-            let SSE = 146.25;
-            let S = 168.75;
-            let SSW = 191.25;
-            let SW = 213.75;
-            let WSW = 236.25;
-            let W = 258.75;
-            let WNW = 281.25;
-            let NW = 303.75;
-            let NNW = 326.25;
-
-            if ((bearing >= N || bearing >= N2) && bearing < NNE) {
-                direction = 'N';
-            } else if (bearing >= NNE && bearing < NE) {
-                direction = 'NNE';
-            } else if (bearing >= NE && bearing < ENE) {
-                direction = 'NE';
-            } else if (bearing >= ENE && bearing < E) {
-                direction = 'ENE';
-            } else if (bearing >= E && bearing < ESE) {
-                direction = 'E';
-            } else if (bearing >= ESE && bearing < SE) {
-                direction = 'ESE';
-            } else if (bearing >= SE && bearing < SSE) {
-                direction = 'SE';
-            } else if (bearing >= SSE && bearing < S) {
-                direction = 'SSE';
-            } else if (bearing >= S && bearing < SSW) {
-                direction = 'S';
-            } else if (bearing >= SSW && bearing < SW) {
-                direction = 'SSW';
-            } else if (bearing >= SW && bearing < WSW) {
-                direction = 'SW';
-            } else if (bearing >= WSW && bearing < W) {
-                direction = 'WSW';
-            } else if (bearing >= W && bearing < WNW) {
-                direction = 'W';
-            } else if (bearing >= WNW && bearing < NW) {
-                direction = 'WNW';
-            } else if (bearing >= NW && bearing < NNW) {
-                direction = 'NW';
-            } else if (bearing >= NNW && bearing < N) {
-                direction = 'NNW';
-            }
-
-            return direction;
-        };
-
-        weatherCtrl.processCurrentDarkSkyData = function(data) {
-            weatherCtrl.dsCurrently = {
-                t: data.currently.temperature + '\u00B0',
-                h: (data.currently.humidity * 100).toFixed(2) + '%',
-                p: (data.currently.pressure * 0.02953).toFixed(2) + ' inHg',
-                stormDistance: data.currently.nearestStormDistance + ' miles',
-                precipIntensity: data.currently.precipIntensity,
-                precipProbability: data.currently.precipProbability * 100 + '%',
-                precipType: data.currently.precipType,
-                apparent_t: data.currently.apparentTemperature + '\u00B0',
-                dewPoint: data.currently.dewPoint + '\u00B0',
-                windSpeed: data.currently.windSpeed,
-                windBearing: weatherCtrl.getWindDirection(data.currently.windBearing),
-                visibility: data.currently.visibility + ' miles',
-                cloudCover: data.currently.cloudCover * 100 + '%',
-                ozone: data.currently.ozone,
-                time: moment.unix(parseInt(data.currently.time)).tz('America/Denver').format('HH:mm:ss')
-            };
-
-            let tarr = [];
-            let harr = [];
-            let parr = [];
-            weatherCtrl.dsForecastChartData = _.map(data.hourly.data, function(obj) {
-                tarr.push([obj.time * 1000, obj.temperature]);
-                harr.push([obj.time * 1000, obj.humidity * 100]);
-                parr.push([obj.time * 1000, parseFloat((obj.pressure * 0.02953).toFixed(2))]);
-            });
-
-            weatherCtrl.dsChartData = {
-                t: tarr,
-                h: harr,
-                p: parr
-            }
-        };
-
         weatherCtrl.getWundergroundData = function() {
             $http({
                 method: 'GET',
@@ -175,19 +83,42 @@
             });
         };
 
+        weatherCtrl.loadDarkSkyData = function(data) {
+            let ds = data.daily.data[0];
+            weatherCtrl.ds = {
+                forecastSummary: ds.summary,
+                forecastHigh: format.temp(ds.temperatureHigh),
+                forecastHighTime: format.dsTime(ds.temperatureHighTime),
+                forecastLow: format.temp(ds.temperatureLow),
+                forecastLowTime: format.dsTime(ds.temperatureLowTime),
+                forecastPrecipType: ds.precipType,
+                forecastPrecipChance: format.dsPercentage(ds.precipProbability),
+                forecastCloudCover: format.dsPercentage(ds.cloudCover),
+                forecastWindSpeed: format.speed(ds.windSpeed),
+                forecastWindBearing: format.bearing(ds.windBearing),
+                forecastGust: format.speed(ds.windGust),
+                forecastGustTime: format.dsTime(ds.windGustTime),
+                forecastVisibility: format.miles(ds.visibility)
+            };
+        };
+
         weatherCtrl.getLatestOutsideInfo();
         weatherCtrl.getWundergroundData();
         chartService.createOutsideChart();
-        WeatherService.getDarkSkyData().then(function(data) {
-            weatherCtrl.processCurrentDarkSkyData(data);
-            chartService.createDarkSkyChart(weatherCtrl.dsChartData);
+        DarkSkyService.getData().then(function(data) {
+            if (!data.error) {
+                weatherCtrl.loadDarkSkyData(data);
+                weatherCtrl.showForecast = true;
+            } else {
+                weatherCtrl.showForecast = false;
+            }
         });
 
         return weatherCtrl;
     };
 
     angular.module('Weather').component('weatherInfo', {
-        controller: ['$http', 'chartService', 'moment', 'WeatherService', WeatherComponent],
+        controller: ['$http', 'chartService', 'moment', 'WeatherService', 'DarkSkyService', 'format', WeatherComponent],
         templateUrl: '/javascripts/weatherInfo/weatherInfo.tpl.html'
     });
 })();
