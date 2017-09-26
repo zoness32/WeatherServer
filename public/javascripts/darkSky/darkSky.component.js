@@ -16,7 +16,7 @@
                 windSpeed: format.speed(data.currently.windSpeed),
                 windBearing: format.bearing(data.currently.windBearing),
                 visibility: format.miles(data.currently.visibility),
-                cloudCover: format.percentage(data.currently.cloudCover),
+                cloudCover: format.dsPercentage(data.currently.cloudCover),
                 ozone: data.currently.ozone,
                 time: format.dsTime(data.currently.time)
             };
