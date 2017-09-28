@@ -337,6 +337,25 @@ router.post('/weather_info', function(req, res) {
         pressure && pressure !== null &&
         date && date !== null) {
 
+        https.get('https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=KIDNAMPA52&PASSWORD=7f46akpk&dateutc=now&tempf=' + temperature + '&baromin=' + pressure + '&humidity=' + humi, (response) => {
+            const {statusCode} = response;
+            const contentType = response.headers['content-type'];
+
+            let error;
+            if (statusCode !== 200) {
+                error = new Error('Request Failed.\n' +
+                    `Status Code: ${statusCode}`);
+            } else if (!/^text\/html/.test(contentType)) {
+                error = new Error('Invalid content-type.\n' +
+                    `Expected text/html but received ${contentType}`);
+            }
+            if (error) {
+                console.error(error.message);
+            }
+        }).on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
+        });
+
         collection.insert({
             humidity: humi,
             temp: temperature,
