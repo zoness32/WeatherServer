@@ -367,13 +367,15 @@ router.post('/weather_info', function(req, res) {
             });
         }
 
-        fcollection.set({
-            humidity: humi,
-            temp: temperature,
-            pressure: pressure,
-            date: date,
-            unitId: unitId
-        });
+        if (!test) {
+            fcollection.set({
+                humidity: humi,
+                temp: temperature,
+                pressure: pressure,
+                date: date,
+                unitId: unitId
+            });
+        }
 
         collection.insert({
             humidity: humi,

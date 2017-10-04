@@ -15,7 +15,6 @@
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
-                                            <div layout="column" ng-if="$ctrl.showForecast">
                                                 <h2>Today's Forecast</h2>
                                                 <h4>{{$ctrl.ds.forecastSummary}}</h4>
                                                 <span>High: {{$ctrl.ds.forecastHigh}} at {{$ctrl.ds.forecastHighTime}}</span>
@@ -24,9 +23,9 @@
                                                 <span>Cloud cover: {{$ctrl.ds.forecastCloudCover}}</span>
                                                 <span>Wind: {{$ctrl.ds.forecastWindSpeed}} {{$ctrl.ds.forecastWindBearing}}, with gusts up to {{$ctrl.ds.forecastGust}} around {{$ctrl.ds.forecastGustTime}}</span>
                                                 <span>Visibility: {{$ctrl.ds.forecastVisibility}}</span>
-                                            </div>
 
-                                            <div layout="column" ng-if="$ctrl.showCurrent">
+
+                                            <div layout="column">
                                                 <h2>Current</h2>
                                                 <span>Temperature: {{$ctrl.currt}}</span>
                                                 <span>Humidity: {{$ctrl.currh}}</span>
@@ -34,14 +33,14 @@
                                                 <span>Last updated on {{$ctrl.currdate}}</span>
                                             </div>
 
-                                            <div layout="column" ng-if="$ctrl.showHighs">
+                                            <div layout="column">
                                                 <h2>Highs</h2>
                                                 <span>High Temp: {{$ctrl.hight}} at {{$ctrl.hightdate}}</span>
                                                 <span>High Humidity: {{$ctrl.highh}} at {{$ctrl.highhdate}}</span>
                                                 <span>High Pressure: {{$ctrl.highp}} at {{$ctrl.highpdate}}</span>
                                             </div>
 
-                                            <div layout="column" ng-if="$ctrl.showLows">
+                                            <div layout="column">
                                                 <h2>Lows</h2>
                                                 <span>Low Temp: {{$ctrl.lowt}} at {{$ctrl.lowtdate}}</span>
                                                 <span>Low Humidity: {{$ctrl.lowh}} at {{$ctrl.lowhdate}}</span>

@@ -7,7 +7,7 @@
         };
 
         service.dsPercentage = function(value) {
-            return (value * 100).toFixed(2) + '%';
+            return (value * 100) + '%';
         };
 
         service.percentage = function(value) {
@@ -39,7 +39,7 @@
         };
 
         service.speed = function(value) {
-            return value.toFixed(2) + 'mph';
+            return value === '--.--' ? value + 'mph' : value.toFixed(2) + 'mph';
         };
 
         service.bearing = function(bearing) {

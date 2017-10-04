@@ -1,15 +1,54 @@
 (function() {
     let WeatherComponent = function($http, chartService, moment, WeatherService, DarkSkyService, format) {
         let weatherCtrl = this;
+        let time = '--:--:--';
+        let datetime = '--/--/--, --:--:--';
+        let dash2 = '--';
+        let dash3 = '---';
+        let dash4 = '----';
+        let dash3dot = '--.-';
+        let dash4dot = '--.--';
+
         weatherCtrl.humidity = [];
         weatherCtrl.temp = [];
         weatherCtrl.pressure = [];
         weatherCtrl.labels = [];
         weatherCtrl.old = false;
-        weatherCtrl.showLows = false;
-        weatherCtrl.showHighs = false;
-        weatherCtrl.showCurrent = false;
-        weatherCtrl.showForecast = false;
+
+        weatherCtrl.ds = {
+            forecastSummary: dash4,
+            forecastHigh: format.temp(dash4dot),
+            forecastHighTime: time,
+            forecastLow: format.temp(dash4dot),
+            forecastLowTime: time,
+            forecastPrecipType: dash4,
+            forecastPrecipChance: format.percentage(dash2),
+            forecastCloudCover: format.percentage(dash2),
+            forecastWindSpeed: format.speed(dash4dot),
+            forecastWindBearing: dash3,
+            forecastGust: format.speed(dash4dot),
+            forecastGustTime: time,
+            forecastVisibility: format.miles(dash3dot)
+        };
+
+        weatherCtrl.currt = format.temp(dash4dot);
+        weatherCtrl.currh = format.percentage(dash4dot);
+        weatherCtrl.currp = format.inHg(dash4dot);
+        weatherCtrl.currdate = datetime;
+
+        weatherCtrl.hight = format.temp(dash4dot);
+        weatherCtrl.hightdate = time;
+        weatherCtrl.highh = format.percentage(dash4dot);
+        weatherCtrl.highhdate = time;
+        weatherCtrl.highp = format.inHg(dash4dot);
+        weatherCtrl.highpdate = time;
+
+        weatherCtrl.lowt = format.temp(dash4dot);
+        weatherCtrl.lowtdate = time;
+        weatherCtrl.lowh = format.temp(dash4dot);
+        weatherCtrl.lowhdate = time;
+        weatherCtrl.lowp = format.inHg(dash4dot);
+        weatherCtrl.lowpdate = time;
 
         weatherCtrl.getLatestOutsideInfo = function() {
             weatherCtrl.latestTempOutside = 'unavailable';
@@ -23,9 +62,6 @@
                     weatherCtrl.currh = data.h;
                     weatherCtrl.currp = data.p;
                     weatherCtrl.currdate = data.update;
-                    weatherCtrl.showCurrent = true;
-                } else {
-                    weatherCtrl.showCurrent = false;
                 }
             });
 
@@ -37,9 +73,6 @@
                     weatherCtrl.highhdate = data.hdate;
                     weatherCtrl.highp = data.p;
                     weatherCtrl.highpdate = data.pdate;
-                    weatherCtrl.showHighs = true;
-                } else {
-                    weatherCtrl.showHighs = false;
                 }
             });
 
@@ -51,9 +84,6 @@
                     weatherCtrl.lowhdate = data.hdate;
                     weatherCtrl.lowp = data.p;
                     weatherCtrl.lowpdate = data.pdate;
-                    weatherCtrl.showLows = true;
-                } else {
-                    weatherCtrl.showLows = false;
                 }
             });
         };
@@ -108,9 +138,6 @@
         DarkSkyService.getData().then(function(data) {
             if (!data.error) {
                 weatherCtrl.loadDarkSkyData(data);
-                weatherCtrl.showForecast = true;
-            } else {
-                weatherCtrl.showForecast = false;
             }
         });
 
