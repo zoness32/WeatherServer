@@ -10,6 +10,16 @@ let monk = require('monk');
 let weather_db = monk('localhost:27017/weather_stats');
 let reminders_db = monk('localhost:27017/reminders');
 
+const admin = require('firebase-admin');
+
+let serviceCert = require("./firestore.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceCert)
+});
+
+let fdb = admin.firestore();
+
 router.get('/', function(req, res) {
     let collection = weather_db.get('weather_data');
     collection.find({}, function(err, data) {
@@ -330,30 +340,39 @@ router.post('/weather_info', function(req, res) {
     let temperature = req.query.temp;
     let pressure = req.query.pressure;
     let unitId = req.query.unitId;
+    let test = req.query.test;
     let date = moment().format('x');
+    let dateName = moment(parseInt(date)).format('MMDDYY-HHmmss');
+    let fcollection = fdb.collection('weather_data').doc(dateName);
 
-    if (humi && humi !== null &&
-        temperature && temperature !== null &&
-        pressure && pressure !== null &&
-        date && date !== null) {
+    if (humi && temperature && pressure && date) {
+        if (!test) {
+            https.get('https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=KIDNAMPA52&PASSWORD=7f46akpk&dateutc=now&tempf=' + temperature + '&baromin=' + pressure + '&humidity=' + humi, (response) => {
+                const {statusCode} = response;
+                const contentType = response.headers['content-type'];
 
-        https.get('https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=KIDNAMPA52&PASSWORD=7f46akpk&dateutc=now&tempf=' + temperature + '&baromin=' + pressure + '&humidity=' + humi, (response) => {
-            const {statusCode} = response;
-            const contentType = response.headers['content-type'];
+                let error;
+                if (statusCode !== 200) {
+                    error = new Error('Request Failed.\n' +
+                        `Status Code: ${statusCode}`);
+                } else if (!/^text\/html/.test(contentType)) {
+                    error = new Error('Invalid content-type.\n' +
+                        `Expected text/html but received ${contentType}`);
+                }
+                if (error) {
+                    console.error(error.message);
+                }
+            }).on('error', (e) => {
+                console.error(`Got error: ${e.message}`);
+            });
+        }
 
-            let error;
-            if (statusCode !== 200) {
-                error = new Error('Request Failed.\n' +
-                    `Status Code: ${statusCode}`);
-            } else if (!/^text\/html/.test(contentType)) {
-                error = new Error('Invalid content-type.\n' +
-                    `Expected text/html but received ${contentType}`);
-            }
-            if (error) {
-                console.error(error.message);
-            }
-        }).on('error', (e) => {
-            console.error(`Got error: ${e.message}`);
+        fcollection.set({
+            humidity: humi,
+            temp: temperature,
+            pressure: pressure,
+            date: date,
+            unitId: unitId
         });
 
         collection.insert({
