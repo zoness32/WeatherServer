@@ -197,7 +197,10 @@ router.get('/all_inside', function(req, res) {
 router.get('/latest_outside', function getLatest(req, res) {
     let fcollection = fdb.collection('weather_data');
 
-    fcollection.where('unitId', '==', '1').limit(1).get()
+    fcollection.where('unitId', '==', '1')
+        .orderBy('date', 'desc')
+        .limit(1)
+        .get()
         .then(docs => {
             docs.forEach(doc => {
                 let data = doc.data();
