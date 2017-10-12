@@ -5,15 +5,13 @@
         weatherService.getLatestOutsideInfo = function() {
             return $http.get('api/latest_outside')
                 .then(function(latest) {
-                    datum = latest.data[0];
-                    if (!angular.isUndefined(datum) && !angular.isUndefined(datum.temp) &&
-                        !angular.isUndefined(datum.humidity) && !angular.isUndefined(datum.pressure) &&
-                        !angular.isUndefined(datum.date)) {
+                    let data = latest.data;
+                    if (data && data.temp && data.humidity && data.pressure && data.date) {
                         return {
-                            t: format.temp(datum.temp),
-                            h: format.percentage(datum.humidity),
-                            p: format.inHg(datum.pressure),
-                            update: format.timeWithMMDDYY(datum.date)
+                            t: format.temp(data.temp),
+                            h: format.percentage(data.humidity),
+                            p: format.inHg(data.pressure),
+                            update: format.timeWithMMDDYY(data.date)
                         }
                     } else {
                         console.log('api/latest_outside: Data undefined');

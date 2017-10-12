@@ -21,130 +21,103 @@ admin.initializeApp({
 let fdb = admin.firestore();
 
 router.get('/', function(req, res) {
-    let collection = weather_db.get('weather_data');
-    collection.find({}, function(err, data) {
-        if (err) throw err;
-        res.json(data);
-    });
+    res.json({message: "You've hit the endpoint!"});
 });
 
 router.get('/highs', function(req, res) {
-    let collection = weather_db.get('weather_data');
+    let fcollection = fdb.collection('weather_data');
     let unitId = req.query.unitId;
     let now = moment();
     let beginning = moment([now.year(), now.month(), now.date()]);
 
-    if (unitId !== undefined && unitId >= 0) {
-        let findObject = {unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}};
-        collection.find(findObject, {
-            sort: {temp: -1},
-            limit: 1
-        }, function(err, tempData) {
-            if (err) throw err;
-            collection.find(findObject, {
-                sort: {humidity: -1},
-                limit: 1
-            }, function(err, humidityData) {
-                if (err) throw err;
-                collection.find(findObject, {
-                    sort: {pressure: -1},
-                    limit: 1
-                }, function(err, pressureData) {
-                    if (err) throw err;
-                    if (tempData.length === 0 || humidityData.length === 0 || pressureData.length === 0) {
-                        res.json({error: 'Undefined data', data: {t: tempData, h: humidityData, p: pressureData}});
-                    } else {
-                        let tempObj = {
-                            temp: tempData[0].temp,
-                            date: tempData[0].date
-                        };
-
-                        let humiObj = {
-                            humidity: humidityData[0].humidity,
-                            date: humidityData[0].date
-                        };
-
-                        let pressureObj = {
-                            pressure: pressureData[0].pressure,
-                            date: pressureData[0].date
-                        };
-
-                        res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
-                    }
+    if (unitId && unitId >= 0) {
+        fcollection
+            .where('date', '>', beginning.format('x'))
+            .where('date', '<=', now.format('x'))
+            .get()
+            .then(docs => {
+                let docArray = [];
+                docs.forEach(doc => {
+                    docArray.push(doc.data());
                 });
+
+                let t = _.maxBy(docArray, 'temp');
+                let p = _.maxBy(docArray, 'pressure');
+                let h = _.maxBy(docArray, 'humidity');
+
+                res.json({
+                    temp: {temp: t.temp, date: t.date},
+                    humidity: {humidity: h.humidity, date: h.date},
+                    pressure: {pressure: p.pressure, date: p.date}
+                })
             });
-        });
     } else {
         res.json({success: false, error: 'A unitId must be provided.'});
     }
 });
 
 router.get('/lows', function(req, res) {
-    let collection = weather_db.get('weather_data');
+    let fcollection = fdb.collection('weather_data');
     let unitId = req.query.unitId;
     let now = moment();
     let beginning = moment([now.year(), now.month(), now.date()]);
 
-    if (unitId !== undefined && unitId >= 0) {
-        let findObject = {unitId: unitId, date: {$gt: beginning.format('x'), $lt: now.format('x')}};
-        collection.find(findObject, {
-            sort: {temp: 1},
-            limit: 1
-        }, function(err, tempData) {
-            if (err) throw err;
-            collection.find(findObject, {
-                sort: {humidity: 1},
-                limit: 1
-            }, function(err, humidityData) {
-                if (err) throw err;
-                collection.find(findObject, {
-                    sort: {pressure: 1},
-                    limit: 1
-                }, function(err, pressureData) {
-                    if (err) throw err;
-                    let tempObj = {
-                        temp: tempData[0].temp,
-                        date: tempData[0].date
-                    };
-                    let humiObj = {
-                        humidity: humidityData[0].humidity,
-                        date: humidityData[0].date
-                    };
-                    let pressureObj = {
-                        pressure: pressureData[0].pressure,
-                        date: pressureData[0].date
-                    };
-                    res.json({temp: tempObj, humidity: humiObj, pressure: pressureObj});
+    if (unitId && unitId >= 0) {
+        fcollection
+            .where('date', '>', beginning.format('x'))
+            .where('date', '<=', now.format('x'))
+            .get()
+            .then(docs => {
+                let docArray = [];
+                docs.forEach(doc => {
+                    docArray.push(doc.data());
                 });
+
+                let t = _.minBy(docArray, 'temp');
+                let p = _.minBy(docArray, 'pressure');
+                let h = _.minBy(docArray, 'humidity');
+
+                res.json({
+                    temp: {temp: t.temp, date: t.date},
+                    humidity: {humidity: h.humidity, date: h.date},
+                    pressure: {pressure: p.pressure, date: p.date}
+                })
             });
-        });
     } else {
         res.json({success: false, error: 'A unitId must be provided.'});
     }
 });
 
 router.get('/info_in_range', function(req, res) {
-    let collection = weather_db.get('weather_data');
+    let fcollection = fdb.collection('weather_data');
     let min = req.query.min;
     let max = req.query.max;
     let unitId = req.query.unitId;
 
-    if (min !== undefined && unitId !== undefined) {
-        if (max === undefined) {
-            max = moment().format('x');
-        }
-        collection.find({unitId: unitId, date: {$gt: min, $lt: max}}, function(err, data) {
-            if (err) throw err;
-            let result = _.map(data, function(datum) {
-                return {
-                    date: datum.date,
-                    humidity: datum.humidity,
-                    temperature: datum.temp,
-                    pressure: datum.pressure
-                };
-            });
+    // TODO: optimize for multiple data collectors; different collections for each? Custom indexes (slower)?
 
-            res.json(result);
+    if (min && unitId) {
+        fcollection
+            .where('date', '>', min)
+            .where('date', '<=', max)
+            .orderBy('date')
+            .get()
+            .then(docs => {
+                let result = [];
+                docs.forEach(doc => {
+                    let data = doc.data();
+                    if (data.unitId === unitId) {
+                        result.push({
+                            date: data.date,
+                            humidity: data.humidity,
+                            temperature: data.temp,
+                            pressure: data.pressure
+                        });
+                    }
+                });
+                res.json(result);
+            }).catch(err => {
+            console.log('Error getting documents', err);
         });
     } else {
         res.json({
@@ -183,19 +156,24 @@ router.post('/delete_documents', function(req, res) {
 });
 
 router.get('/all_outside', function(req, res) {
-    let collection = weather_db.get('weather_data');
-    collection.find({unitId: "1"}, function(err, data) {
-        if (err) throw err;
-        let result = _.map(data, function(datum) {
-            return {
-                date: datum.date,
-                humidity: datum.humidity,
-                temperature: datum.temp,
-                pressure: datum.pressure
-            };
-        });
+    let fcollection = fdb.collection('weather_data');
 
-        res.json(result);
+    fcollection.where('unitId', '==', '1').get()
+        .then(docs => {
+            let result = [];
+            docs.forEach(doc => {
+                let data = doc.data();
+                result.push({
+                    date: data.date,
+                    humidity: data.humidity,
+                    temperature: data.temp,
+                    pressure: data.pressure
+                });
+            });
+            res.json(result);
+        }).catch(err => {
+        console.log('Error getting documents', err);
+        res.json({error: err});
     });
 });
 
@@ -217,10 +195,23 @@ router.get('/all_inside', function(req, res) {
 });
 
 router.get('/latest_outside', function getLatest(req, res) {
-    let collection = weather_db.get('weather_data');
-    collection.find({unitId: "1"}, {sort: {$natural: -1}, limit: 1}, function(err, data) {
-        if (err) throw err;
-        res.json(data);
+    let fcollection = fdb.collection('weather_data');
+
+    fcollection.where('unitId', '==', '1').limit(1).get()
+        .then(docs => {
+            docs.forEach(doc => {
+                let data = doc.data();
+                let result = {
+                    temp: data.temp,
+                    humidity: data.humidity,
+                    pressure: data.pressure,
+                    date: data.date
+                };
+                res.json(result);
+            });
+        }).catch(err => {
+        console.log('Error getting latest outside: ' + err);
+        res.json({error: err});
     });
 });
 
