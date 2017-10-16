@@ -398,6 +398,47 @@ router.post('/weather_info', function(req, res) {
     }
 });
 
+router.post('/test', function(req, res) {
+    let collection = weather_db.get('weather_data');
+    let humi = req.query.humidity;
+    let temperature = req.query.temp;
+    let pressure = req.query.pressure;
+    let light = req.query.light;
+    let unitId = req.query.unitId;
+    let date = moment().format('x');
+    let dateName = moment(parseInt(date)).format('MMDDYY-HHmmss');
+    let fcollection = fdb.collection('weather_test').doc(dateName);
+
+    if (humi && temperature && pressure && date) {
+            fcollection.set({
+                humidity: humi,
+                light: light,
+                temp: temperature,
+                pressure: pressure,
+                date: date,
+                unitId: unitId
+            });
+
+        res.json({
+            humidity: humi,
+            temp: temperature,
+            pressure: pressure,
+            light: light,
+            date: date
+        })
+    } else {
+        res.json({
+            error: "invalid data",
+            data: {
+                h: humi,
+                t: temperature,
+                p: pressure,
+                l: light,
+                d: date
+            }
+        });
+    }
+});
 
 router.get('/current_time', function getCurrentTime(req, res) {
     res.json({time: Date.now()});
