@@ -257,9 +257,6 @@
                     apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'week').format('x') + '&max=' + max + '&unitId=1';
                     // apiUrl = 'api/all_outside';
                     break;
-                case 'inside-chart':
-                    apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'month').format('x') + '&max=' + max + '&unitId=2';
-                    break;
             }
 
             $http({
@@ -425,10 +422,6 @@
 
         chartService.createOutsideChart = function() {
             chartService._.createChart('outside-chart');
-        };
-
-        chartService.createInsideChart = function() {
-            // chartService._.createChart('inside-chart');
         };
 
         return chartService;
