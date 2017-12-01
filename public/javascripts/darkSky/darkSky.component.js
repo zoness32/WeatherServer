@@ -1,25 +1,27 @@
 (function() {
-    let DarkSkyComponent = function(chartService, moment, DarkSkyService, format) {
+    let DarkSkyComponent = function(chartService, moment, DarkSkyService) {
         let dsCtrl = this;
 
+        dsCtrl.dsService = DarkSkyService;
+
         dsCtrl.processCurrentDarkSkyData = function(data) {
-            dsCtrl.currently = {
-                t: format.temp(data.currently.temperature),
-                h: format.dsPercentage(data.currently.humidity),
-                p: format.dsInHg(data.currently.pressure),
-                stormDistance: format.miles(data.currently.nearestStormDistance),
-                precipIntensity: data.currently.precipIntensity,
-                precipProbability: format.dsPercentage(data.currently.precipProbability),
-                precipType: data.currently.precipType,
-                apparent_t: format.temp(data.currently.apparentTemperature),
-                dewPoint: format.temp(data.currently.dewPoint),
-                windSpeed: format.speed(data.currently.windSpeed),
-                windBearing: format.bearing(data.currently.windBearing),
-                visibility: format.miles(data.currently.visibility),
-                cloudCover: format.dsPercentage(data.currently.cloudCover),
-                ozone: data.currently.ozone,
-                time: format.dsTime(data.currently.time)
-            };
+            // dsCtrl.currently = {
+            //     t: format.temp(data.currently.temperature),
+            //     h: format.dsPercentage(data.currently.humidity),
+            //     p: format.dsInHg(data.currently.pressure),
+            //     stormDistance: format.miles(data.currently.nearestStormDistance),
+            //     precipIntensity: data.currently.precipIntensity,
+            //     precipProbability: format.dsPercentage(data.currently.precipProbability),
+            //     precipType: data.currently.precipType,
+            //     apparent_t: format.temp(data.currently.apparentTemperature),
+            //     dewPoint: format.temp(data.currently.dewPoint),
+            //     windSpeed: format.speed(data.currently.windSpeed),
+            //     windBearing: format.bearing(data.currently.windBearing),
+            //     visibility: format.miles(data.currently.visibility),
+            //     cloudCover: format.dsPercentage(data.currently.cloudCover),
+            //     ozone: data.currently.ozone,
+            //     time: format.dsTime(data.currently.time)
+            // };
 
             let tarr = [];
             let harr = [];
@@ -47,7 +49,7 @@
     };
 
     angular.module('Weather').component('darkSky', {
-        controller: ['chartService', 'moment', 'DarkSkyService', 'format', DarkSkyComponent],
+        controller: ['chartService', 'moment', 'DarkSkyService', DarkSkyComponent],
         templateUrl: '/javascripts/darkSky/darkSky.tpl.html'
     });
 })();

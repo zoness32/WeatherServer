@@ -14,6 +14,7 @@
         weatherCtrl.pressure = [];
         weatherCtrl.labels = [];
         weatherCtrl.old = false;
+        weatherCtrl.dsService = DarkSkyService;
 
         weatherCtrl.ds = {
             forecastSummary: dash4,
@@ -113,32 +114,32 @@
             });
         };
 
-        weatherCtrl.loadDarkSkyData = function(data) {
-            let ds = data.daily.data[0];
-            weatherCtrl.ds = {
-                forecastSummary: ds.summary,
-                forecastHigh: format.temp(ds.temperatureHigh),
-                forecastHighTime: format.dsTime(ds.temperatureHighTime),
-                forecastLow: format.temp(ds.temperatureLow),
-                forecastLowTime: format.dsTime(ds.temperatureLowTime),
-                forecastPrecipType: ds.precipType,
-                forecastPrecipChance: format.dsPercentage(ds.precipProbability),
-                forecastCloudCover: format.dsPercentage(ds.cloudCover),
-                forecastWindSpeed: format.speed(ds.windSpeed),
-                forecastWindBearing: format.bearing(ds.windBearing),
-                forecastGust: format.speed(ds.windGust),
-                forecastGustTime: format.dsTime(ds.windGustTime),
-                forecastVisibility: format.miles(ds.visibility)
-            };
-        };
+        // weatherCtrl.loadDarkSkyData = function(data) {
+        //     let ds = data.daily.data[0];
+        //     weatherCtrl.ds = {
+        //         forecastSummary: ds.summary,
+        //         forecastHigh: format.temp(ds.temperatureHigh),
+        //         forecastHighTime: format.dsTime(ds.temperatureHighTime),
+        //         forecastLow: format.temp(ds.temperatureLow),
+        //         forecastLowTime: format.dsTime(ds.temperatureLowTime),
+        //         forecastPrecipType: ds.precipType,
+        //         forecastPrecipChance: format.dsPercentage(ds.precipProbability),
+        //         forecastCloudCover: format.dsPercentage(ds.cloudCover),
+        //         forecastWindSpeed: format.speed(ds.windSpeed),
+        //         forecastWindBearing: format.bearing(ds.windBearing),
+        //         forecastGust: format.speed(ds.windGust),
+        //         forecastGustTime: format.dsTime(ds.windGustTime),
+        //         forecastVisibility: format.miles(ds.visibility)
+        //     };
+        // };
 
         weatherCtrl.getLatestOutsideInfo();
         weatherCtrl.getWundergroundData();
         chartService.createOutsideChart();
         DarkSkyService.getData().then(function(data) {
-            if (!data.error) {
-                weatherCtrl.loadDarkSkyData(data);
-            }
+            // if (!data.error) {
+            //     weatherCtrl.loadDarkSkyData(data);
+            // }
         });
 
         return weatherCtrl;

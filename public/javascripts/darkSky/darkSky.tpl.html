@@ -1,19 +1,21 @@
 <div layout="column">
     <h2>Current Conditions</h2>
-    <span>Updated: {{$ctrl.currently.time}}</span></span>
+    <span>Updated: {{$ctrl.dsService.currently.time}}</span></span>
     <br>
-    <span>Current Temp: {{$ctrl.currently.t}}</span>
-    <span>Feels Like: {{$ctrl.currently.apparent_t}}</span>
-    <span>Current Humidity: {{$ctrl.currently.h}}</span>
-    <span>Current Pressure: {{$ctrl.currently.p}}</span>
-    <span>Dew Point:    {{$ctrl.currently.dewPoint}}</span>
-    <span>Wind: {{$ctrl.currently.windSpeed}} {{$ctrl.currently.windBearing}}</span>
-    <span>Visibility: {{$ctrl.currently.visibility}}</span>
+    <span>Current Temp: {{$ctrl.dsService.currently.t}}</span>
+    <span>Feels Like: {{$ctrl.dsService.currently.apparent_t}}</span>
+    <span>Current Humidity: {{$ctrl.dsService.currently.h}}</span>
+    <span>Current Pressure: {{$ctrl.dsService.currently.p}}</span>
+    <span>Dew Point:    {{$ctrl.dsService.currently.dewPoint}}</span>
+    <span>Wind: {{$ctrl.dsService.currently.windSpeed}} {{$ctrl.dsService.currently.windBearing}}</span>
+    <span>Visibility: {{$ctrl.dsService.currently.visibility}}</span>
 
     <h3>Precipitation</h3>
-    <span>Chance: {{$ctrl.currently.precipProbability}}</span>
-    <span>Cloud Cover: {{$ctrl.currently.cloudCover}}</span>
-    <span>Nearest Storm: {{$ctrl.currently.stormDistance}}</span>
-    <span ng-if="$ctrl.currently.precipType">Type: {{$ctrl.currently.precipType}}</span>
-    <span ng-if="$ctrl.currently.precipProbability > 0">Intensity: {{$ctrl.currently.precipIntensity}}</span>
+    <!--<span>Chance: {{$ctrl.dsService.currently.precipProbability}}</span>-->
+
+    <span ng-if="$ctrl.dsService.currently.precipType">Chance of {{$ctrl.dsService.currently.precipType}}: {{$ctrl.dsService.currently.precipProbability}}</span>
+    <span>Cloud Cover: {{$ctrl.dsService.currently.cloudCover}}</span>
+    <span>Nearest Storm: {{$ctrl.dsService.currently.stormDistance}}</span>
+    <span ng-if="$ctrl.dsService.currently.precipType">Type: {{$ctrl.dsService.currently.precipType}}</span>
+    <span ng-if="$ctrl.dsService.currently.precipProbability > 0">Intensity: {{$ctrl.dsService.currently.precipIntensity}}</span>
 </div>

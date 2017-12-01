@@ -15,14 +15,19 @@
                                 <md-card flex-gt-xs="25" flex="100">
                                     <md-card-content>
                                         <div layout="column">
-                                                <h2>Today's Forecast</h2>
-                                                <h4>{{$ctrl.ds.forecastSummary}}</h4>
-                                                <span>High: {{$ctrl.ds.forecastHigh}} at {{$ctrl.ds.forecastHighTime}}</span>
-                                                <span>Low: {{$ctrl.ds.forecastLow}} at {{$ctrl.ds.forecastLowTime}}</span>
-                                                <span ng-if="$ctrl.ds.forecastPrecipType">Chance of {{$ctrl.ds.forecastPrecipType}}: {{$ctrl.ds.forecastPrecipChance}}</span>
-                                                <span>Cloud cover: {{$ctrl.ds.forecastCloudCover}}</span>
-                                                <span>Wind: {{$ctrl.ds.forecastWindSpeed}} {{$ctrl.ds.forecastWindBearing}}, with gusts up to {{$ctrl.ds.forecastGust}} around {{$ctrl.ds.forecastGustTime}}</span>
-                                                <span>Visibility: {{$ctrl.ds.forecastVisibility}}</span>
+                                            <h2>Current DS Data</h2>
+                                            <span>Temperature: {{$ctrl.dsService.currently.t}}</span>
+                                            <span>Humidity: {{$ctrl.dsService.currently.h}}</span>
+                                            <span>Pressure: {{$ctrl.dsService.currently.p}}</span>
+
+                                            <h2>Today's Forecast</h2>
+                                            <h4>{{$ctrl.dsService.forecast.forecastSummary}}</h4>
+                                            <span>High: {{$ctrl.dsService.forecast.forecastHigh}} at {{$ctrl.dsService.forecast.forecastHighTime}}</span>
+                                            <span>Low: {{$ctrl.dsService.forecast.forecastLow}} at {{$ctrl.dsService.forecast.forecastLowTime}}</span>
+                                            <span ng-if="$ctrl.dsService.forecast.forecastPrecipType">Chance of {{$ctrl.dsService.forecast.forecastPrecipType}}: {{$ctrl.dsService.forecast.forecastPrecipChance}}</span>
+                                            <span>Cloud cover: {{$ctrl.dsService.forecast.forecastCloudCover}}</span>
+                                            <span>Wind: {{$ctrl.dsService.forecast.forecastWindSpeed}} {{$ctrl.dsService.forecast.forecastWindBearing}}, with gusts up to {{$ctrl.dsService.forecast.forecastGust}} around {{$ctrl.dsService.forecast.forecastGustTime}}</span>
+                                            <span>Visibility: {{$ctrl.dsService.forecast.forecastVisibility}}</span>
 
 
                                             <div layout="column">
