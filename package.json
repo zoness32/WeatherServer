@@ -19,7 +19,7 @@
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "firebase-admin": "^5.4.0",
-    "highcharts": "^5.0.12",
+    "highcharts": "^6.0.3",
     "lodash": "^4.16.6",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
