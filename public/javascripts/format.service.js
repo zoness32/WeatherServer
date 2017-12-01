@@ -7,7 +7,7 @@
         };
 
         service.dsPercentage = function(value) {
-            return (value * 100) + '%';
+            return Math.round(value * 100) + '%';
         };
 
         service.percentage = function(value) {

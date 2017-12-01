@@ -19,7 +19,7 @@
                                                 <h4>{{$ctrl.ds.forecastSummary}}</h4>
                                                 <span>High: {{$ctrl.ds.forecastHigh}} at {{$ctrl.ds.forecastHighTime}}</span>
                                                 <span>Low: {{$ctrl.ds.forecastLow}} at {{$ctrl.ds.forecastLowTime}}</span>
-                                                <span>Chance of {{$ctrl.ds.forecastPrecipType}}: {{$ctrl.ds.forecastPrecipChance}}</span>
+                                                <span ng-if="$ctrl.ds.forecastPrecipType">Chance of {{$ctrl.ds.forecastPrecipType}}: {{$ctrl.ds.forecastPrecipChance}}</span>
                                                 <span>Cloud cover: {{$ctrl.ds.forecastCloudCover}}</span>
                                                 <span>Wind: {{$ctrl.ds.forecastWindSpeed}} {{$ctrl.ds.forecastWindBearing}}, with gusts up to {{$ctrl.ds.forecastGust}} around {{$ctrl.ds.forecastGustTime}}</span>
                                                 <span>Visibility: {{$ctrl.ds.forecastVisibility}}</span>
