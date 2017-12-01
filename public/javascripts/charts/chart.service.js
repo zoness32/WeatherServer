@@ -393,6 +393,7 @@
 
                     plotOptions: {
                         series: {
+                            gapSize: 3,
                             groupPixelWidth: 20,
                             forced: true,
                             units: [
