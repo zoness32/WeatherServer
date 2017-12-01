@@ -275,4 +275,92 @@ router.post('/weather_info', function(req, res) {
     }
 });
 
+router.post('/garage_temp', function(req, res) {
+    let humi = req.query.humidity;
+    let temperature = req.query.temp;
+    let pressure = req.query.pressure;
+    let unitId = req.query.unitId;
+    let test = req.query.test;
+    let date = moment().format('x');
+    let dateName = moment(parseInt(date)).format('MMDDYY-HHmmss');
+    let fcollection = fdb.collection('garage_temp').doc(dateName);
+
+    if (humi && temperature && pressure && date) {
+        if (!test) {
+            fcollection.set({
+                humidity: humi,
+                temp: temperature,
+                pressure: pressure,
+                date: date,
+                unitId: unitId
+            });
+        }
+
+        res.json({
+            humidity: humi,
+            temp: temperature,
+            pressure: pressure,
+            unitId: unitId,
+            date: date
+        })
+    } else {
+        res.json({
+            error: "invalid data",
+            data: {
+                h: humi,
+                t: temperature,
+                p: pressure,
+                d: date,
+                u: unitId
+            }
+        });
+    }
+});
+
+router.get('/all_garage', function(req, res) {
+    let fcollection = fdb.collection('garage_temp');
+
+    fcollection.where('unitId', '==', '2').get()
+        .then(docs => {
+            let result = [];
+            docs.forEach(doc => {
+                let data = doc.data();
+                result.push({
+                    date: data.date,
+                    humidity: data.humidity,
+                    temperature: data.temp,
+                    pressure: data.pressure
+                });
+            });
+            res.json(result);
+        }).catch(err => {
+        console.log('Error getting documents', err);
+        res.json({error: err});
+    });
+});
+
+router.get('/latest_garage', function getLatestGarage(req, res) {
+    let fcollection = fdb.collection('garage_temp');
+
+    fcollection.where('unitId', '==', '2')
+        .orderBy('date', 'desc')
+        .limit(1)
+        .get()
+        .then(docs => {
+            docs.forEach(doc => {
+                let data = doc.data();
+                let result = {
+                    temp: data.temp,
+                    humidity: data.humidity,
+                    pressure: data.pressure,
+                    date: data.date
+                };
+                res.json(result);
+            });
+        }).catch(err => {
+        console.log('Error getting latest outside: ' + err);
+        res.json({error: err});
+    });
+});
+
 module.exports = router;

@@ -257,6 +257,9 @@
                     apiUrl = 'api/info_in_range?min=' + min.subtract(1, 'week').format('x') + '&max=' + max + '&unitId=1';
                     // apiUrl = 'api/all_outside';
                     break;
+                case 'garage-chart':
+                    apiUrl = 'api/all_garage';
+                    break;
             }
 
             $http({
@@ -423,6 +426,10 @@
 
         chartService.createOutsideChart = function() {
             chartService._.createChart('outside-chart');
+        };
+
+        chartService.createGarageChart = function() {
+            chartService._.createChart('garage-chart');
         };
 
         return chartService;

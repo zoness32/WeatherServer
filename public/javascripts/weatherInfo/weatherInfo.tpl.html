@@ -101,6 +101,23 @@
                             </div>
                         </md-content>
                     </md-tab>
+                    <md-tab label="Garage">
+                        <md-content>
+                            <div layout-gt-xs="row" layout="column">
+                                <md-card flex-gt-xs="25" flex="100">
+                                    <md-card-content>
+                                        <garage-info></garage-info>
+                                    </md-card-content>
+                                </md-card>
+                                <md-card flex-gt-xs="75" flex="100">
+                                    <md-card-content>
+                                        <chart-component flex chart-title="Garage Data"
+                                                         chart-id="garage"></chart-component>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </md-content>
+                    </md-tab>
                 </md-tabs>
 
             </md-card-content>
